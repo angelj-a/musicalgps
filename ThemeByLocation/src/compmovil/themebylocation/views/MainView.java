@@ -31,33 +31,24 @@ public class MainView extends View {
 
 	
 	
+	public void enableChangingFrequency(boolean enabled) {
+		frequency_edit.setEnabled(enabled);
+	}
+	
+	public void enableStart(boolean enabled){
+		startbutton.setEnabled(enabled);
+	}
+	
 	public String getFrequency(){
 		return frequency_edit.getText().toString();
 	}
-		
-	
-	public void disableChangingFrequency() {
-		frequency_edit.setEnabled(false);
-	}
-	
-	public void enableChangingFrequency() {
-		frequency_edit.setEnabled(true);
-	}
-	
-	public void disableStart(){
-		startbutton.setEnabled(false);
-	}
-
-	public void enableStart(){
-		startbutton.setEnabled(true);
-	}
 	
 	
-	public Button getStart() {
+	public Button getStartButton() {
 		return startbutton;
 	}	
 	
-	public Button getStop() {
+	public Button getStopButton() {
 		return stopbutton;
 	}
 	
