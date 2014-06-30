@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import compmovil.themebylocation.ControllerService;
 import compmovil.themebylocation.R;
@@ -30,6 +31,9 @@ public class MainController implements OnClickListener {
 	//Options implemented by MainController.IncomingHandler 
 	public final static int MSG_1 = 1;
 	public final static int MSG_2 = 2;
+	public final static int ERROR = 3;
+	
+	public final static int ERROR_LOCATION_PROVIDER_NOT_DETECTED = 1;
 	
 	//Context
 	private Activity mActivity;
@@ -41,12 +45,9 @@ public class MainController implements OnClickListener {
     private HandlerThread mServiceThread;
     
     private boolean mIsBound = false;
+    private boolean mIsRunning = false;
 
     
-	//private final Intent mLoggingServiceIntent = new Intent("compmovil.themebylocation.ControllerService");
-    
-
-	
     class IncomingHandler extends Handler {
     	
     	public IncomingHandler(Looper looper){
@@ -57,16 +58,22 @@ public class MainController implements OnClickListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_1: //TODO
+            	Toast.makeText(mActivity, "Recibido mensaje de Service", Toast.LENGTH_SHORT).show();            	
                 break;
             case MSG_2: //TODO
                 //String str1 = msg.getData().getString("str1");
                 //textStrValue.setText("Str Message: " + str1);
                 break;
+            case ERROR:
+            	int errorcode = msg.arg1;
+            	processError(errorcode);
             default:
                 super.handleMessage(msg);
             }
         }
+
     }
+    
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
@@ -79,15 +86,27 @@ public class MainController implements OnClickListener {
                 // In this case the service has crashed before we could even do anything with it
             }
             mIsBound = true;
+            //FAKE:
+            mIsRunning = true;
         }
 
         public void onServiceDisconnected(ComponentName className) {
             // This is called when the connection with the service has been unexpectedly disconnected - process crashed.
             mService = null;
             mIsBound = false;
+            Log.i(TAG,"Desconectado del service");
         }
     };
 	
+    private Intent mServiceIntent; 
+    
+    
+    /*----------------------------------------------------------------*
+     * 
+     *	MainController:  methods
+     * 
+     *---------------------------------------------------------------*/
+    
 
 	public MainController(Activity context, MainView v) {
 		mActivity = context;
@@ -101,6 +120,9 @@ public class MainController implements OnClickListener {
 		
         mActivity.findViewById(R.id.startbutton).setOnClickListener(this);
         mActivity.findViewById(R.id.stopbutton).setOnClickListener(this);
+        mActivity.findViewById(R.id.playbutton).setOnClickListener(this);
+        mActivity.findViewById(R.id.stopservicebutton).setOnClickListener(this);
+        
     }
 	
 	@Override
@@ -114,7 +136,8 @@ public class MainController implements OnClickListener {
 			if (!mIsBound){
 				// Bind to service (if possible)
 				try {
-					mActivity.bindService(new Intent(mActivity, ControllerService.class), mConnection,
+					mServiceIntent = new Intent(mActivity, ControllerService.class);
+					mActivity.bindService(mServiceIntent, mConnection,
 							Context.BIND_AUTO_CREATE);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -122,7 +145,7 @@ public class MainController implements OnClickListener {
 			}
 			else {
 				// Create Message 
-				Message msg = Message.obtain(null, ControllerService.CLIENT_MSG_OP1);
+				Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
 				Bundle bundle = new Bundle();
 				bundle.putString("KEY", "Mensaje desde el cliente");
 				msg.setData(bundle);
@@ -139,10 +162,35 @@ public class MainController implements OnClickListener {
 			Log.i(TAG, "Click stop");
 			stopButtonSubroutine();
 		}
-		else 
+		else if (mView.getPlayButton() == (Button)v){
+			Log.i(TAG,"Click play");
+			fakeExitedRegion();
+		}
+		else if (mView.getStopServiceButton() == (Button)v) {
+			Log.i(TAG,"Click stop service");
+			if (mIsBound)
+				stopAll();
+		}
+		else
 			Log.i(TAG, "UNKNOWN");
 	}
 	
+	
+	
+	private void fakeExitedRegion() {
+		Message msg = Message.obtain(null, ControllerService.DETECTOR_EXITED_REGION);
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}			
+		
+	}
+
+	/* ------------------------------------------------------------
+	 * MainController: auxiliary functions
+	 * 
+	 * ------------------------------------------------------------*/
 	
 		
 	public void startButtonSubroutine() {
@@ -154,6 +202,36 @@ public class MainController implements OnClickListener {
 	public void stopButtonSubroutine() {
 		mView.enableStart(true);
 		mView.enableChangingFrequency(true);
-	}		
+	}
+	
+	private void processError(int errorcode) {
+		switch(errorcode){
+			case ERROR_LOCATION_PROVIDER_NOT_DETECTED:
+				//TODO: unbind from service
+				break;
+			
+			default:
+				break;
+		}
+		
+	}
+	
+	public boolean isServiceRunning(){
+		return mIsRunning;
+	}
+	
+	private void unbind(){
+        mActivity.unbindService(mConnection);
+        mService = null;
+        mIsBound = false;
+	}
+
+	public void stopAll() {
+		unbind();
+	    mActivity.stopService(mServiceIntent);
+	    mIsRunning = false;
+
+		
+	}
 
 }

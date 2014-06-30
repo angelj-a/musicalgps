@@ -15,6 +15,8 @@ public class MainView extends View {
 	
 	private Button startbutton;
 	private Button stopbutton;
+	private Button playbutton;
+	private Button stopservicebutton;
 	private EditText frequency_edit;
 	
 
@@ -26,6 +28,8 @@ public class MainView extends View {
 
 		startbutton = (Button) activity.findViewById(R.id.startbutton);
 		stopbutton = (Button) activity.findViewById(R.id.stopbutton);
+		playbutton = (Button) activity.findViewById(R.id.playbutton);
+		stopservicebutton =	(Button) activity.findViewById(R.id.stopservicebutton);
 		frequency_edit = (EditText) activity.findViewById(R.id.track_freq);
 	}
 
@@ -44,12 +48,26 @@ public class MainView extends View {
 	}
 	
 	
+	
+
+	/* ------------------------------
+	 * Methods used to get a button 
+	 * ------------------------------ */
+	
 	public Button getStartButton() {
 		return startbutton;
 	}	
 	
 	public Button getStopButton() {
 		return stopbutton;
+	}
+
+	public Button getPlayButton() {
+		return playbutton;
+	}
+
+	public Button getStopServiceButton() {
+		return stopservicebutton;
 	}
 	
 	

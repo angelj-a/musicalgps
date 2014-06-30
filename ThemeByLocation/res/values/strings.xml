@@ -3,5 +3,6 @@
     <string name="app_name">ThemeByLocation</string>
     <string name="track_freq_label">Frecuencia de trackeo (segundos)</string>
     <string name="track_freq_default">5</string>
+    <string name="str_stop_service">Stop service</string>
 
 </resources>

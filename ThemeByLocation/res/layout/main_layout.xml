@@ -20,7 +20,8 @@
         android:layout_marginTop="15dp"
         android:ems="10"
         android:inputType="number|numberDecimal"
-        android:text="@string/track_freq_default" >
+        android:text="@string/track_freq_default"
+        android:textAlignment="textEnd" >
 
     </EditText>
 
@@ -40,5 +41,22 @@
         android:layout_alignBottom="@+id/startbutton"
         android:layout_toRightOf="@+id/startbutton"
         android:text="Detener" />
+
+    <Button
+        android:id="@+id/playbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/startbutton"
+        android:layout_marginTop="35dp"
+        android:text="Play" />
+
+    <Button
+        android:id="@+id/stopservicebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:text="@string/str_stop_service" />
 
 </RelativeLayout>
