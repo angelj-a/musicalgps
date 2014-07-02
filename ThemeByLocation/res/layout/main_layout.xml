@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/track_freq"
-        android:text="@string/track_freq_label" />
+        android:text="@string/track_freq_label"
+        android:visibility="invisible" />
 
     <EditText
         android:id="@+id/track_freq"
@@ -21,7 +22,8 @@
         android:ems="10"
         android:inputType="number|numberDecimal"
         android:text="@string/track_freq_default"
-        android:textAlignment="textEnd" >
+        android:textAlignment="textEnd"
+        android:visibility="invisible" >
 
     </EditText>
 
@@ -31,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/track_freq_label"
-        android:text="Iniciar" />
+        android:text="@string/start_service" />
 
     <Button
         android:id="@+id/stopbutton"
@@ -40,23 +42,25 @@
         android:layout_alignBaseline="@+id/startbutton"
         android:layout_alignBottom="@+id/startbutton"
         android:layout_toRightOf="@+id/startbutton"
-        android:text="Detener" />
+        android:text="Detener"
+        android:visibility="invisible" />
 
     <Button
-        android:id="@+id/playbutton"
+        android:id="@+id/bindbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/startbutton"
         android:layout_marginTop="35dp"
-        android:text="Play" />
+        android:text="@string/str_manual_stop_song" />
 
     <Button
         android:id="@+id/stopservicebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/bindbutton"
+        android:layout_marginTop="31dp"
         android:text="@string/str_stop_service" />
 
 </RelativeLayout>

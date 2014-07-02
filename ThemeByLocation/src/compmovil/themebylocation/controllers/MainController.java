@@ -137,7 +137,7 @@ public class MainController implements OnClickListener {
 		
         mActivity.findViewById(R.id.startbutton).setOnClickListener(this);
         mActivity.findViewById(R.id.stopbutton).setOnClickListener(this);
-        mActivity.findViewById(R.id.playbutton).setOnClickListener(this);
+        mActivity.findViewById(R.id.bindbutton).setOnClickListener(this);
         mActivity.findViewById(R.id.stopservicebutton).setOnClickListener(this);
         
     }
@@ -146,10 +146,10 @@ public class MainController implements OnClickListener {
 	public void onClick(View v) {
 		if (mView.getStartButton() == (Button)v){
 			Log.i(TAG, "Click start");
-			if (!("".equals(mView.getFrequency()) )) {
-				startButtonSubroutine();
-				Log.i(TAG, "frecuencia = " + mView.getFrequency());
-			}
+//			if (!("".equals(mView.getFrequency()) )) {
+//				startButtonSubroutine();
+//				Log.i(TAG, "frecuencia = " + mView.getFrequency());
+//			}
 			if (!mIsBound){
 				// Bind to service (if possible)
 				try {
@@ -158,23 +158,24 @@ public class MainController implements OnClickListener {
 					e.printStackTrace();
 				}
 			}
-			else {
-				// Create Message 
-				//Bundle bundle = new Bundle();
-				//bundle.putString("KEY", "Mensaje desde el cliente");
-				//msg.setData(bundle);
-				
-				//fakeEnteredRegion();
-				
-			}
+//			else {
+//				// Create Message 
+//				//Bundle bundle = new Bundle();
+//				//bundle.putString("KEY", "Mensaje desde el cliente");
+//				//msg.setData(bundle);
+//				
+//				//fakeEnteredRegion();
+//				
+//			}
 		}
-		else if (mView.getStopButton() == (Button)v){
-			Log.i(TAG, "Click stop");
-			stopButtonSubroutine();
-		}
-		else if (mView.getPlayButton() == (Button)v){
-			Log.i(TAG,"Click play");
-			fakeExitedRegion();
+//		else if (mView.getStopButton() == (Button)v){
+//			Log.i(TAG, "Click stop");
+//			stopButtonSubroutine();
+//		}
+		else if (mView.getBindButton() == (Button)v){
+			Log.i(TAG,"Click bind");
+			//fakeExitedRegion();
+			bind();
 		}
 		else if (mView.getStopServiceButton() == (Button)v) {
 			Log.i(TAG,"Click stop service");
@@ -186,7 +187,7 @@ public class MainController implements OnClickListener {
 	}
 	
 	
-	
+	//TODO: remove
 	private void fakeExitedRegion() {
 		Message msg = Message.obtain(null, ControllerService.DETECTOR_EXITED_REGION);
 		try {
@@ -197,6 +198,7 @@ public class MainController implements OnClickListener {
 		
 	}
 	
+	//TODO:remove
 	private void fakeEnteredRegion() {
 		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
 		RectangularRegion aregion = new RectangularRegion(2048);

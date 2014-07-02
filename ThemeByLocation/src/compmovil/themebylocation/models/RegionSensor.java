@@ -1,12 +1,9 @@
 package compmovil.themebylocation.models;
 
-import compmovil.themebylocation.ControllerService;
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -14,6 +11,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+
+import compmovil.themebylocation.ControllerService;
 
 public class RegionSensor {
 	
@@ -112,10 +111,12 @@ public class RegionSensor {
 	public RegionSensor(Messenger messenger) {
 		mObserverMessenger = messenger;
 		
-		//TODO:REMOVE LATER. Replace with Regions Manager or something like that
+		//TODO:REMOVE LATER. Replace it with Regions Manager or something like that
 		try {
 			mRegionsContainer[0] = new RectangularRegion(testLocation0, testLocation1);
 			mRegionsContainer[1] = new RectangularRegion(testLocation0B, testLocation1B);
+			((RectangularRegion)mRegionsContainer[0]).setId(105);
+			((RectangularRegion)mRegionsContainer[1]).setId(112);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

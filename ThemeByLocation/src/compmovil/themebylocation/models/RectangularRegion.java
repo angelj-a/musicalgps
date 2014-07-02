@@ -1,7 +1,6 @@
 package compmovil.themebylocation.models;
 
 import android.location.Location;
-import android.util.Log;
 
 public class RectangularRegion implements Region {
 	
@@ -12,10 +11,6 @@ public class RectangularRegion implements Region {
 	int mId;
 	double mEastMostLongitude, mWestMostLongitude;
 	double mNorthMostLatitude, mSouthMostLatitude; 
-	
-	public RectangularRegion(int id){
-		mId = id;
-	};
 	
 	public RectangularRegion(Location corner0, Location corner1) throws Exception{
 		double lat0, long0, lat1, long1;
@@ -46,9 +41,19 @@ public class RectangularRegion implements Region {
 		
 	}
 	
+	//TODO:REMOVE
+	public void setId(int id) {
+		mId = id;
+	}
+	
+	//TODO:REMOVE
 	public int getId(){
 		return mId;
 	}
+	//TODO:REMOVE
+		public RectangularRegion(int id){
+			mId = id;
+		};
 	
 	/* (non-Javadoc)
 	 * @see compmovil.themebylocation.models.Region#isInsideRegion(android.location.Location)
