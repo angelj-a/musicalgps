@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -21,12 +20,21 @@ import android.widget.Toast;
 
 import compmovil.themebylocation.ControllerService;
 import compmovil.themebylocation.R;
+import compmovil.themebylocation.models.RectangularRegion;
 import compmovil.themebylocation.views.MainView;
 
 
 public class MainController implements OnClickListener {
 	
+	/***********************************************************
+	 * 
+	 * MainController: attributes and constants
+	 * 
+	 ***********************************************************/
+	
 	final static String TAG = "THEMELOCATION";
+	public enum StopOptions { ALL, ONLY_SERVICE, ONLY_UNBIND, ONLY_CONTROLLER };
+
 	
 	//Options implemented by MainController.IncomingHandler 
 	public final static int MSG_1 = 1;
@@ -35,6 +43,7 @@ public class MainController implements OnClickListener {
 	
 	public final static int ERROR_LOCATION_PROVIDER_NOT_DETECTED = 1;
 	
+
 	//Context
 	private Activity mActivity;
 	private MainView mView;
@@ -42,12 +51,22 @@ public class MainController implements OnClickListener {
     private Messenger mMyMessenger;
     
     private Messenger mService;
-    private HandlerThread mServiceThread;
+    private HandlerThread mIncomingHandlerThread;
     
     private boolean mIsBound = false;
     private boolean mIsRunning = false;
 
     
+    private Intent mServiceIntent;
+    
+    
+    
+    /***********************************************************
+	 * 
+	 * MainController: classes
+	 * 
+	 ***********************************************************/
+        
     class IncomingHandler extends Handler {
     	
     	public IncomingHandler(Looper looper){
@@ -96,16 +115,14 @@ public class MainController implements OnClickListener {
             mIsBound = false;
             Log.i(TAG,"Desconectado del service");
         }
-    };
+    };   
+    
 	
-    private Intent mServiceIntent; 
-    
-    
-    /*----------------------------------------------------------------*
-     * 
-     *	MainController:  methods
-     * 
-     *---------------------------------------------------------------*/
+    /***********************************************************
+	 * 
+	 * MainController: methods
+	 * 
+	 ***********************************************************/
     
 
 	public MainController(Activity context, MainView v) {
@@ -113,10 +130,10 @@ public class MainController implements OnClickListener {
 		mView = v;
 		
 		// Start a new thread to handle incoming messages from ControllerService
-		mServiceThread = new HandlerThread("[MainController] IncomingHandler");
-		mServiceThread.start();
+		mIncomingHandlerThread = new HandlerThread("[MainController] IncomingHandler");
+		mIncomingHandlerThread.start();
 		
-		mMyMessenger = new Messenger(new IncomingHandler(mServiceThread.getLooper()));
+		mMyMessenger = new Messenger(new IncomingHandler(mIncomingHandlerThread.getLooper()));
 		
         mActivity.findViewById(R.id.startbutton).setOnClickListener(this);
         mActivity.findViewById(R.id.stopbutton).setOnClickListener(this);
@@ -136,26 +153,19 @@ public class MainController implements OnClickListener {
 			if (!mIsBound){
 				// Bind to service (if possible)
 				try {
-					mServiceIntent = new Intent(mActivity, ControllerService.class);
-					mActivity.bindService(mServiceIntent, mConnection,
-							Context.BIND_AUTO_CREATE);
+					bind();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			else {
 				// Create Message 
-				Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
-				Bundle bundle = new Bundle();
-				bundle.putString("KEY", "Mensaje desde el cliente");
-				msg.setData(bundle);
-
-				try {
-					// Send message to ControllerService
-					mService.send(msg);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}				
+				//Bundle bundle = new Bundle();
+				//bundle.putString("KEY", "Mensaje desde el cliente");
+				//msg.setData(bundle);
+				
+				//fakeEnteredRegion();
+				
 			}
 		}
 		else if (mView.getStopButton() == (Button)v){
@@ -169,7 +179,7 @@ public class MainController implements OnClickListener {
 		else if (mView.getStopServiceButton() == (Button)v) {
 			Log.i(TAG,"Click stop service");
 			if (mIsBound)
-				stopAll();
+				stop(StopOptions.ONLY_SERVICE);
 		}
 		else
 			Log.i(TAG, "UNKNOWN");
@@ -186,11 +196,66 @@ public class MainController implements OnClickListener {
 		}			
 		
 	}
+	
+	private void fakeEnteredRegion() {
+		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
+		RectangularRegion aregion = new RectangularRegion(2048);
+		msg.obj = aregion;
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}			
+		
+	}
+	
+	
+	public boolean isServiceRunning(){
+		return mIsRunning;
+	}
+	
+	public boolean isBound(){
+		return mIsBound;
+	}
+	
+		
+	public void stop(StopOptions op){
+		unbind();
+		switch(op){
+		case ALL:
+			stopTheService();
+			cleanUp();
+			break;
+		case ONLY_CONTROLLER:
+			cleanUp();
+			break;
+			
+		case ONLY_SERVICE:
+			stopTheService();
+			break;
+			
+		case ONLY_UNBIND:
+		default:
+			break;
+		}
+		
+	}
+	
+	
+	public void bind(){
+		mServiceIntent = new Intent(mActivity, ControllerService.class);
+		mActivity.startService(mServiceIntent); //to allow the service to keep running after the client unbinds 
+		mActivity.bindService(mServiceIntent, mConnection,
+				Context.BIND_AUTO_CREATE);		
+	}
+	
+	
 
-	/* ------------------------------------------------------------
+    /***********************************************************
+	 * 
 	 * MainController: auxiliary functions
 	 * 
-	 * ------------------------------------------------------------*/
+	 ***********************************************************/
 	
 		
 	public void startButtonSubroutine() {
@@ -216,22 +281,22 @@ public class MainController implements OnClickListener {
 		
 	}
 	
-	public boolean isServiceRunning(){
-		return mIsRunning;
-	}
 	
 	private void unbind(){
-        mActivity.unbindService(mConnection);
-        mService = null;
-        mIsBound = false;
+		if (mIsBound) {
+			mActivity.unbindService(mConnection);
+			mService = null;
+			mIsBound = false;
+		}
 	}
 
-	public void stopAll() {
-		unbind();
+	private void stopTheService() {
 	    mActivity.stopService(mServiceIntent);
 	    mIsRunning = false;
-
-		
+	}
+	
+	private void cleanUp(){
+		mIncomingHandlerThread.getLooper().quit();
 	}
 
 }

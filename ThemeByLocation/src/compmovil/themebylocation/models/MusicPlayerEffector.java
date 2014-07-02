@@ -16,26 +16,32 @@ public class MusicPlayerEffector implements Effector {
 	private MediaPlayer mPlayer;
 	private HandlerThread mPlayerThread;
 	private Handler mPlayerHandler;
-	private boolean mIsRunning;
+	private boolean mIsThreadRunning;
+	
+
+	private enum States { NOTREADY, PREPARED, PLAYING, STOPPED};
+	private States mState;
 	
 	private Runnable mRunnablePlaySong = new Runnable()
 	{
     	@Override
     	public void run() {		
     		if (mPlayer != null) {
+    			if (mState == States.STOPPED){
+    				try {
+						mPlayer.prepare();
+					}
+    				catch (IllegalStateException e) {}
+    				catch (IOException e) {}
+    				mState = States.PREPARED;
+    			}
 				if (mPlayer.isPlaying()) {					
-					//TODO: be able to choose a song
-					//mPlayer.stop();
-					//try {
-					//	mPlayer.prepare();
-					//} catch (IllegalStateException e) {
-					//	e.printStackTrace();
-					//} catch (IOException e) {
-					//	e.printStackTrace();
-					//}
+					//TODO: to be able to choose a song
 					mPlayer.seekTo(0);
+					mState = States.PREPARED;
 				}
 				mPlayer.start();
+				mState = States.PLAYING;
 			}		
 		}
 	};
@@ -44,52 +50,72 @@ public class MusicPlayerEffector implements Effector {
 	{
     	@Override
     	public void run() {
-    		if (mPlayer != null)
+    		if (mPlayer != null) {
     			mPlayer.stop();
+    			mState = States.STOPPED;
+    		}
     	}
+	};
+	
+	private Runnable mRunnableRelease = new Runnable()
+	{
+		@Override
+		public void run() {
+			mPlayer.release();
+			mPlayerHandler.getLooper().quit();
+		}
 	};
 			
 		
 
 	public MusicPlayerEffector(Context ctx) {
-		// TODO Auto-generated constructor stub
 		Log.i("THEMELOCATION","Creado MusicPlayerEffector");
 		mContext = ctx;
-		mIsRunning = false;
+		mIsThreadRunning = false;
+		mState = States.NOTREADY;
 	}
 
 	@Override
-	public void initialize() {
+	public void initialize() throws Exception {
 		mPlayer = MediaPlayer.create(mContext, R.raw.region105);
-		if (null != mPlayer)
+		if (mPlayer != null)
 			mPlayer.setLooping(true);
+		else
+			throw new Exception("Error de inicialización: no se pudo instanciar MediaPlayer");
+
 		mPlayerThread = new HandlerThread("[MusicPlayerEffector] MusicPlayer thread");
+		mPlayerThread.start();
+		mPlayerHandler = new Handler(mPlayerThread.getLooper());
+		mIsThreadRunning = true;		
+		
+		mState = States.PREPARED;
 	}
 
 	@Override
 	public void onEnterRegion(Region region){
 		Log.i("THEMELOCATION","onEnterRegion MusicPlayerEffector");
-		if (!mIsRunning) {
-			mPlayerThread.start();
-			mPlayerHandler = new Handler(mPlayerThread.getLooper());
-			mIsRunning = true;
-		}
 		mPlayerHandler.post(mRunnablePlaySong);
-
+		assert(mState == States.PLAYING);
 	}
 
 	@Override
 	public void onExitRegion() {
 		Log.i("THEMELOCATION","onExitRegion MusicPlayerEffector");
 		mPlayerHandler.post(mRunnableStopSong);
-		
+		assert(mState == States.STOPPED);
 	}
 
 	@Override
-	public void stop() {
+	public void stopEffector() {
 		Log.i("THEMELOCATION","stop MusicPlayerEffector");
-		mPlayerHandler.post(mRunnableStopSong);
-		mPlayer.release();		
+		if (mIsThreadRunning) {
+			if (mState != States.STOPPED)
+				mPlayerHandler.post(mRunnableStopSong);
+			mPlayerHandler.post(mRunnableRelease);
+			//mPlayerThread.getLooper().quitSafely();
+			mIsThreadRunning = false;
+			mState = States.NOTREADY;
+		}
 	}
 	
 

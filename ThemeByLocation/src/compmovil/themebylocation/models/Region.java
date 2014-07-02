@@ -1,8 +1,9 @@
 package compmovil.themebylocation.models;
 
-public class Region {
-	
-	public Region(){
-	};
-	
+import android.location.Location;
+
+public interface Region {
+
+	public abstract boolean isInsideRegion(Location l);
+
 }

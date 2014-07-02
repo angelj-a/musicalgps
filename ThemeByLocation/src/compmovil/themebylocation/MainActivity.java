@@ -3,7 +3,7 @@ package compmovil.themebylocation;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.util.Log;
 
 import compmovil.themebylocation.controllers.MainController;
 import compmovil.themebylocation.views.MainView;
@@ -13,7 +13,8 @@ public class MainActivity extends Activity {
 	private MainController maincontroller;
 	private MainView mainview;
 	
-	private boolean mBackPressed = false;
+	private boolean mIsControllerBound;
+	//private boolean mBackPressed = false;
 	
 	
 	@Override
@@ -23,15 +24,19 @@ public class MainActivity extends Activity {
         mainview = new MainView(this);
         maincontroller = new MainController(this, mainview);
         
-        if (savedInstanceState != null){
-        	//do something
-        }
+        if (savedInstanceState != null)
+        	mIsControllerBound = savedInstanceState.getBoolean("mIsControllerBound");
+        else
+        	mIsControllerBound = false;
         
     }
 	
 	
 	@Override
     protected void onStart(){
+		if (mIsControllerBound) {
+			maincontroller.bind();
+		}
 		super.onStart();
 	}
     
@@ -52,33 +57,19 @@ public class MainActivity extends Activity {
 
 	@Override
     protected void onStop(){
-		super.onPause();
+		super.onStop();
 	}
 
 	@Override
     protected void onDestroy(){
+		maincontroller.stop(MainController.StopOptions.ONLY_CONTROLLER);
+		Log.i("THEMELOCATION", "onDestroy");
 		super.onDestroy();
 	}
 	
-	@Override
-	public void onBackPressed(){
-		if (maincontroller.isServiceRunning()){
-			if (!mBackPressed) {
-				mBackPressed = true;
-				Toast.makeText(this, "Presione otra vez para salir. El servicio seguirá en ejecución.", Toast.LENGTH_SHORT).show();				
-			}
-			else {
-				mBackPressed = false;
-				maincontroller.stopAll();
-				finish();
-			}
-		}
-		else
-			super.onBackPressed();
-	}
 
-//	public void onSaveInstanceState(Bundle savedInstanceState) {
-//		  savedInstanceState.putInt("identifier", intvariable);
-//	}
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		savedInstanceState.putBoolean("mIsControllerBound", maincontroller.isBound());
+	}
 	
 }

@@ -4,7 +4,8 @@ package compmovil.themebylocation;
 import compmovil.themebylocation.controllers.MainController;
 import compmovil.themebylocation.models.Effector;
 import compmovil.themebylocation.models.MusicPlayerEffector;
-import compmovil.themebylocation.models.Region;
+import compmovil.themebylocation.models.RectangularRegion;
+import compmovil.themebylocation.models.RegionSensor;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -26,6 +27,7 @@ public class ControllerService extends Service {
 	
 	//DEBUG
 	private int mClientsCounter = 0;
+	private final static String TAG = "THEMELOCATION";
 	
 	//Options implemented by ControllerService.IncomingHandler
 	public final static int REGISTER_CLIENT_HANDLER  = 0;
@@ -37,7 +39,7 @@ public class ControllerService extends Service {
 	public final static int DETECTOR_EXITED_REGION = 5;
 
 
-	private static final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_ID = 10;
 	private static final boolean ALLOW_REBIND = true;
 
 	
@@ -49,6 +51,7 @@ public class ControllerService extends Service {
 	
 	
 	private Effector mMusicTracksPlayer;
+	private RegionSensor mRegionSensor;
 	
 	
 	class ControllerServiceHandler extends Handler {
@@ -65,11 +68,25 @@ public class ControllerService extends Service {
 				case REGISTER_CLIENT_HANDLER:
 					Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
 					mMessengerClient = msg.replyTo;
-					if (mMusicTracksPlayer == null)
-					{
+					if (mMusicTracksPlayer == null) {
 						mMusicTracksPlayer = new MusicPlayerEffector(getApplicationContext()); 
-						mMusicTracksPlayer.initialize();
-					}					
+						try {
+							mMusicTracksPlayer.initialize();
+						} catch (Exception e) {
+							e.printStackTrace();
+							//TODO: handle exception, notify client and stop service
+						}
+					}
+					if (mRegionSensor == null) {
+						mRegionSensor = new RegionSensor(mMessengerMe);
+						try {
+							mRegionSensor.initialize(getApplicationContext());
+						} catch (Exception e) {
+							e.printStackTrace();
+							//TODO: handle exception, notify client and stop service
+						}
+						mRegionSensor.startSensing();
+					}
 					break;
 					
 				case CLIENT_INITIALIZE:
@@ -90,7 +107,8 @@ public class ControllerService extends Service {
 					
 				case DETECTOR_ENTERED_REGION:
 					//TODO: get region from parameters
-	                Region param = new Region();
+	                RectangularRegion param = (RectangularRegion) msg.obj;
+					Toast.makeText(getApplicationContext(), "Entramos a Region " +  param.getId(), Toast.LENGTH_SHORT).show();
 					mMusicTracksPlayer.onEnterRegion(param);
 					break;
 					
@@ -100,6 +118,7 @@ public class ControllerService extends Service {
 					
 				case STOP_SERVICE: 
 					cleanUp();
+					stopSelf();
 					break;
 			
 				default:
@@ -107,11 +126,20 @@ public class ControllerService extends Service {
 			}
 		}
 	}
+
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startid) {
+		Log.i(TAG,"onStartCommand");
+		return START_NOT_STICKY;
+	}
+	
 	
 	
 	@Override
 	public void onCreate (){
 		super.onCreate();
+		Log.i(TAG,"Service. onCreate");
 		// Starts a separate thread for the message handler
 		mServiceThread = new HandlerThread("[ControllerService] ControllerServiceHandler", 
 				Process.THREAD_PRIORITY_BACKGROUND);
@@ -120,9 +148,12 @@ public class ControllerService extends Service {
 		
 	    // This service's messenger
 		mMessengerMe = new Messenger(mServiceHandler);
+		
+		runOnForeground();
 
-
-		//
+	}
+	
+	private void runOnForeground() {
 		final Intent notificationIntent = new Intent(getApplicationContext(),
 				MainActivity.class);
 		final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -134,13 +165,10 @@ public class ControllerService extends Service {
 				.setOngoing(true).setContentTitle("MusicalGPS en ejecución")
 				.setContentText("Clic para acceder al menú del programa")
 				.setContentIntent(pendingIntent).build();
-
-		// Put this Service in a foreground state, so it won't 
-		// readily be killed by the system  
+  
 		startForeground(NOTIFICATION_ID, notification);
-		
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		if (mClientsCounter == 0)
@@ -156,29 +184,30 @@ public class ControllerService extends Service {
 	@Override
 	public boolean onUnbind (Intent intent){
 		mClientsCounter--;
-		//TODO: stop all secondary services
-		if (mMusicTracksPlayer != null) {
-			mMusicTracksPlayer.stop();
-			mMessengerClient = null;
-			//mMusicTracksPlayer = null;
-		}
+		mMessengerClient = null;
 		return ALLOW_REBIND;
 	}	
 
 	@Override
-	public void onRebind(Intent intent)
-	{        
-	    Log.i("THEMELOCATION","Rebound");
+	public void onRebind(Intent intent) {        
+		Log.i(TAG,"onRebind");
+	}
+	
+	@Override
+	public void onDestroy(){
+		Log.i(TAG,"Service onDestroy");
+		cleanUp();
+		super.onDestroy();
 	}
 	
 	
 	private void cleanUp(){
-		//TODO
-	}
-	
-	//?
-	private void stopAll(){
-		//cleanup
-		//stopSelf();
+		if (mMusicTracksPlayer != null)
+			mMusicTracksPlayer.stopEffector();
+		if (mRegionSensor != null) {
+			mRegionSensor.stopSensing();
+		}
+		mServiceHandler.getLooper().quit();
+			
 	}
 }
