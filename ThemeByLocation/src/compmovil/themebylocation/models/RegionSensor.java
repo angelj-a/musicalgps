@@ -26,7 +26,7 @@ public class RegionSensor {
 
 	
 	//MOCK LOCATIONS:
-    private static final String PROVIDER = "flp";
+    //private static final String PROVIDER = "flp";
     private static final double LAT0 = 37;
     private static final double LNG0 = -122;
     private static final double LAT1 = 38;

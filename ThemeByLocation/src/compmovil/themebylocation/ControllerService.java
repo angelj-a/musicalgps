@@ -89,22 +89,7 @@ public class ControllerService extends Service {
 					}
 					break;
 					
-//				case CLIENT_INITIALIZE:
-//					Toast.makeText(getApplicationContext(), "Iniciando con las opciones elegidas", Toast.LENGTH_SHORT).show();
-//					//TODO: must receive a bundle with the options					
-//					break;
-//					
-//				case CLIENT_MSG_OP2:
-//					//String str1 = msg.getData().getString("region");
-//	                Message newmsg = Message.obtain(null, MainController.MSG_1);
-//	                try {
-//	                	mMessengerClient.send(newmsg);
-//	                } catch (RemoteException e) {
-//	                	e.printStackTrace();
-//	                }
-//
-//					break;
-					
+				//Sent by RegionSensor										
 				case DETECTOR_ENTERED_REGION:
 					//TODO: get region from parameters
 	                RectangularRegion param = (RectangularRegion) msg.obj;

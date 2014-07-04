@@ -37,8 +37,7 @@ public class MainController implements OnClickListener {
 
 	
 	//Options implemented by MainController.IncomingHandler 
-	public final static int MSG_1 = 1;
-	public final static int MSG_2 = 2;
+	public final static int UPDATE_CURRENT_REGION = 2;
 	public final static int ERROR = 3;
 	
 	public final static int ERROR_LOCATION_PROVIDER_NOT_DETECTED = 1;
@@ -76,10 +75,7 @@ public class MainController implements OnClickListener {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-            case MSG_1: //TODO
-            	Toast.makeText(mActivity, "Recibido mensaje de Service", Toast.LENGTH_SHORT).show();            	
-                break;
-            case MSG_2: //TODO
+            case UPDATE_CURRENT_REGION: //TODO
                 //String str1 = msg.getData().getString("str1");
                 //textStrValue.setText("Str Message: " + str1);
                 break;
@@ -136,24 +132,24 @@ public class MainController implements OnClickListener {
 		mMyMessenger = new Messenger(new IncomingHandler(mIncomingHandlerThread.getLooper()));
 		
         mActivity.findViewById(R.id.startbutton).setOnClickListener(this);
-        mActivity.findViewById(R.id.stopbutton).setOnClickListener(this);
-        mActivity.findViewById(R.id.bindbutton).setOnClickListener(this);
+        mActivity.findViewById(R.id.unbindbutton).setOnClickListener(this);
         mActivity.findViewById(R.id.stopservicebutton).setOnClickListener(this);
+        
+        mView.enableUnbindButton(false);
+        mView.enableStopserviceButton(false);
         
     }
 	
 	@Override
 	public void onClick(View v) {
 		if (mView.getStartButton() == (Button)v){
-			Log.i(TAG, "Click start");
-//			if (!("".equals(mView.getFrequency()) )) {
-//				startButtonSubroutine();
-//				Log.i(TAG, "frecuencia = " + mView.getFrequency());
-//			}
+			Log.i(TAG, "Click iniciar");
 			if (!mIsBound){
 				// Bind to service (if possible)
 				try {
 					bind();
+					mView.enableUnbindButton(true);
+					mView.enableStopserviceButton(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -163,24 +159,20 @@ public class MainController implements OnClickListener {
 //				//Bundle bundle = new Bundle();
 //				//bundle.putString("KEY", "Mensaje desde el cliente");
 //				//msg.setData(bundle);
-//				
-//				//fakeEnteredRegion();
-//				
-//			}
 		}
-//		else if (mView.getStopButton() == (Button)v){
-//			Log.i(TAG, "Click stop");
-//			stopButtonSubroutine();
-//		}
-		else if (mView.getBindButton() == (Button)v){
+		else if (mView.getUnbindButton() == (Button)v){
 			Log.i(TAG,"Click bind");
-			//fakeExitedRegion();
-			bind();
+			unbind();
+			mView.enableUnbindButton(false);
+			mView.enableStopserviceButton(false);
 		}
 		else if (mView.getStopServiceButton() == (Button)v) {
 			Log.i(TAG,"Click stop service");
-			if (mIsBound)
+			if (mIsBound) {
 				stop(StopOptions.ONLY_SERVICE);
+				mView.enableUnbindButton(false);
+				mView.enableStopserviceButton(false);
+			}
 		}
 		else
 			Log.i(TAG, "UNKNOWN");
@@ -188,28 +180,17 @@ public class MainController implements OnClickListener {
 	
 	
 	//TODO: remove
-	private void fakeExitedRegion() {
-		Message msg = Message.obtain(null, ControllerService.DETECTOR_EXITED_REGION);
-		try {
-			mService.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}			
-		
-	}
 	
-	//TODO:remove
-	private void fakeEnteredRegion() {
-		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
-		RectangularRegion aregion = new RectangularRegion(2048);
-		msg.obj = aregion;
-		try {
-			mService.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}			
-		
-	}
+//	private void fakeEnteredRegion() {
+//		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
+//		RectangularRegion aregion = new RectangularRegion(2048);
+//		msg.obj = aregion;
+//		try {
+//			mService.send(msg);
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}			
+//	}
 	
 	
 	public boolean isServiceRunning(){
@@ -259,18 +240,7 @@ public class MainController implements OnClickListener {
 	 * 
 	 ***********************************************************/
 	
-		
-	public void startButtonSubroutine() {
-		mView.enableStart(false);
-		mView.enableChangingFrequency(false);
-		
-	}
-	
-	public void stopButtonSubroutine() {
-		mView.enableStart(true);
-		mView.enableChangingFrequency(true);
-	}
-	
+	//TODO:completar
 	private void processError(int errorcode) {
 		switch(errorcode){
 			case ERROR_LOCATION_PROVIDER_NOT_DETECTED:
