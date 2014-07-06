@@ -122,8 +122,12 @@ public class RegionSensor {
 		}
 	}
 	
-	public void initialize(Context ctx){
-		mLocationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);	
+	public void initialize(Context ctx) throws Exception{
+		mLocationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+		
+		if (!(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)))
+			throw new Exception("No hay disponible GPS");
+		
 		mHandlerThread = new HandlerThread("GPS Thread");
 		
 //		//MOCK
@@ -173,7 +177,8 @@ public class RegionSensor {
 	
 	public void stopSensing() {
 		mLocationManager.removeUpdates(mLocationListener);
-		mHandlerThread.getLooper().quit();
+		if (mHandlerThread != null)
+			mHandlerThread.getLooper().quit();
 	}
 
 	

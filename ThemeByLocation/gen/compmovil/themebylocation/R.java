@@ -14,8 +14,9 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int startbutton=0x7f070001;
-        public static final int stopservicebutton=0x7f070002;
+        public static final int info_text=0x7f070003;
+        public static final int startbutton=0x7f070002;
+        public static final int stopservicebutton=0x7f070001;
         public static final int unbindbutton=0x7f070000;
     }
     public static final class layout {

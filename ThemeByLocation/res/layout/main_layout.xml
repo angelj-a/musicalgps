@@ -7,8 +7,8 @@
         android:id="@+id/unbindbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/startbutton"
+        android:layout_alignLeft="@+id/stopservicebutton"
+        android:layout_alignRight="@+id/stopservicebutton"
         android:layout_below="@+id/startbutton"
         android:layout_marginTop="35dp"
         android:clickable="false"
@@ -18,9 +18,8 @@
         android:id="@+id/stopservicebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/unbindbutton"
         android:layout_below="@+id/unbindbutton"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="31dp"
         android:clickable="false"
         android:text="@string/str_stop_service" />
@@ -29,9 +28,19 @@
         android:id="@+id/startbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:text="@string/start_service" />
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stopservicebutton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:text="-"
+        android:visibility="visible" />
 
 </RelativeLayout>

@@ -16,11 +16,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 
 import compmovil.themebylocation.ControllerService;
 import compmovil.themebylocation.R;
-import compmovil.themebylocation.models.RectangularRegion;
 import compmovil.themebylocation.views.MainView;
 
 
@@ -36,11 +34,11 @@ public class MainController implements OnClickListener {
 	public enum StopOptions { ALL, ONLY_SERVICE, ONLY_UNBIND, ONLY_CONTROLLER };
 
 	
-	//Options implemented by MainController.IncomingHandler 
-	public final static int UPDATE_CURRENT_REGION = 2;
-	public final static int ERROR = 3;
-	
-	public final static int ERROR_LOCATION_PROVIDER_NOT_DETECTED = 1;
+	//Options implemented by MainController.IncomingHandler
+	public final static int UPDATE_CURRENT_REGION = 1;
+	public final static int ERROR = 2;
+	public final static int ERROR_LOCATION_PROVIDER_NOT_DETECTED = 0;
+	public final static int ERROR_FAILED_INITIALIZING_MUSIC_PLAYER = 1;
 	
 
 	//Context
@@ -59,6 +57,7 @@ public class MainController implements OnClickListener {
     private Intent mServiceIntent;
     
     
+    private String mInfo;
     
     /***********************************************************
 	 * 
@@ -76,8 +75,8 @@ public class MainController implements OnClickListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case UPDATE_CURRENT_REGION: //TODO
-                //String str1 = msg.getData().getString("str1");
-                //textStrValue.setText("Str Message: " + str1);
+            	mInfo = msg.getData().getString("region_name");
+                mActivity.runOnUiThread(mRunnableUpdateInfo); 
                 break;
             case ERROR:
             	int errorcode = msg.arg1;
@@ -113,6 +112,21 @@ public class MainController implements OnClickListener {
         }
     };   
     
+    private Runnable mRunnableUpdateInfo = new Runnable() { 
+        public void run() 
+        {
+        	Log.i(TAG,"info = " + mInfo);
+        	mView.displayInfo(mInfo); 
+        } 
+    };
+    
+    private Runnable mRunnableBackToInitialUIState  = new Runnable(){
+    	public void run()
+    	{
+    		enableBindingOnView(true);
+    	}
+    };
+    
 	
     /***********************************************************
 	 * 
@@ -135,8 +149,7 @@ public class MainController implements OnClickListener {
         mActivity.findViewById(R.id.unbindbutton).setOnClickListener(this);
         mActivity.findViewById(R.id.stopservicebutton).setOnClickListener(this);
         
-        mView.enableUnbindButton(false);
-        mView.enableStopserviceButton(false);
+        enableBindingOnView(true);
         
     }
 	
@@ -148,30 +161,22 @@ public class MainController implements OnClickListener {
 				// Bind to service (if possible)
 				try {
 					bind();
-					mView.enableUnbindButton(true);
-					mView.enableStopserviceButton(true);
+					enableBindingOnView(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-//			else {
-//				// Create Message 
-//				//Bundle bundle = new Bundle();
-//				//bundle.putString("KEY", "Mensaje desde el cliente");
-//				//msg.setData(bundle);
 		}
 		else if (mView.getUnbindButton() == (Button)v){
 			Log.i(TAG,"Click bind");
 			unbind();
-			mView.enableUnbindButton(false);
-			mView.enableStopserviceButton(false);
+			enableBindingOnView(true);
 		}
 		else if (mView.getStopServiceButton() == (Button)v) {
 			Log.i(TAG,"Click stop service");
 			if (mIsBound) {
 				stop(StopOptions.ONLY_SERVICE);
-				mView.enableUnbindButton(false);
-				mView.enableStopserviceButton(false);
+				enableBindingOnView(true);
 			}
 		}
 		else
@@ -179,20 +184,7 @@ public class MainController implements OnClickListener {
 	}
 	
 	
-	//TODO: remove
-	
-//	private void fakeEnteredRegion() {
-//		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
-//		RectangularRegion aregion = new RectangularRegion(2048);
-//		msg.obj = aregion;
-//		try {
-//			mService.send(msg);
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		}			
-//	}
-	
-	
+
 	public boolean isServiceRunning(){
 		return mIsRunning;
 	}
@@ -221,7 +213,6 @@ public class MainController implements OnClickListener {
 		default:
 			break;
 		}
-		
 	}
 	
 	
@@ -244,15 +235,22 @@ public class MainController implements OnClickListener {
 	private void processError(int errorcode) {
 		switch(errorcode){
 			case ERROR_LOCATION_PROVIDER_NOT_DETECTED:
-				//TODO: unbind from service
+            	mInfo = "Servicio de geolocalización no disponible";
+                mActivity.runOnUiThread(mRunnableUpdateInfo); 
 				break;
 			
 			default:
 				break;
 		}
-		
+		stop(StopOptions.ONLY_SERVICE);
+		mActivity.runOnUiThread(mRunnableBackToInitialUIState);
 	}
-	
+
+	private void enableBindingOnView(boolean enable){
+		mView.enableStartButton(enable);
+		mView.enableUnbindButton(!enable);
+		mView.enableStopserviceButton(!enable);		
+	}
 	
 	private void unbind(){
 		if (mIsBound) {

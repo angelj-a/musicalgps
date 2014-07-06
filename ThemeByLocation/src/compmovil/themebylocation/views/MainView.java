@@ -3,6 +3,7 @@ package compmovil.themebylocation.views;
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import compmovil.themebylocation.R;
 
@@ -15,6 +16,7 @@ public class MainView extends View {
 	private Button startbutton;
 	private Button unbindbutton;
 	private Button stopservicebutton;
+	private TextView infotextview;
 	
 
 	public MainView(Activity a) {
@@ -26,6 +28,7 @@ public class MainView extends View {
 		startbutton = (Button) activity.findViewById(R.id.startbutton);
 		unbindbutton = (Button) activity.findViewById(R.id.unbindbutton);
 		stopservicebutton =	(Button) activity.findViewById(R.id.stopservicebutton);
+		infotextview = (TextView) activity.findViewById(R.id.info_text);
 	}
 
 	
@@ -42,9 +45,8 @@ public class MainView extends View {
 		stopservicebutton.setEnabled(enabled);
 	}
 	
-	//TODO:
-	public void displayRegion(String name){
-		
+	public void displayInfo(String name){
+		infotextview.setText(name);
 	}
 	
 

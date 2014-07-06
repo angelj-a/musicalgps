@@ -11,6 +11,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -24,6 +25,13 @@ import android.widget.Toast;
 
 
 public class ControllerService extends Service {
+	
+	
+	/***********************************************************
+	 * 
+	 * ControllerService: attributes
+	 * 
+	 ***********************************************************/
 	
 	//DEBUG
 	private int mClientsCounter = 0;
@@ -54,6 +62,14 @@ public class ControllerService extends Service {
 	private RegionSensor mRegionSensor;
 	
 	
+	
+	/***********************************************************
+	 * 
+	 * ControllerService: classes
+	 * 
+	 ***********************************************************/
+	
+	
 	class ControllerServiceHandler extends Handler {
 		
 		public ControllerServiceHandler(Looper looper){
@@ -68,42 +84,57 @@ public class ControllerService extends Service {
 				case REGISTER_CLIENT_HANDLER:
 					Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
 					mMessengerClient = msg.replyTo;
-					if (mMusicTracksPlayer == null) {
-						mMusicTracksPlayer = new MusicPlayerEffector(getApplicationContext()); 
-						try {
-							mMusicTracksPlayer.initialize();
-						} catch (Exception e) {
-							e.printStackTrace();
-							//TODO: handle exception, notify client and stop service
-						}
-					}
 					if (mRegionSensor == null) {
 						mRegionSensor = new RegionSensor(mMessengerMe);
 						try {
 							mRegionSensor.initialize(getApplicationContext());
 						} catch (Exception e) {
+							notifyError(MainController.ERROR_LOCATION_PROVIDER_NOT_DETECTED);
 							e.printStackTrace();
-							//TODO: handle exception, notify client and stop service
+							stopAll();
+							return;
 						}
 						mRegionSensor.startSensing();
+					}					
+					if (mMusicTracksPlayer == null) {
+						mMusicTracksPlayer = new MusicPlayerEffector(getApplicationContext()); 
+						try {
+							mMusicTracksPlayer.initialize();
+						} catch (Exception e) {
+							notifyError(MainController.ERROR_FAILED_INITIALIZING_MUSIC_PLAYER);
+							e.printStackTrace();
+							stopAll();
+						}
 					}
+					runOnForeground();
 					break;
 					
 				//Sent by RegionSensor										
 				case DETECTOR_ENTERED_REGION:
-					//TODO: get region from parameters
 	                RectangularRegion param = (RectangularRegion) msg.obj;
 					Toast.makeText(getApplicationContext(), "Entramos a Region " +  param.getId(), Toast.LENGTH_SHORT).show();
 					mMusicTracksPlayer.onEnterRegion(param);
+					
+		            try {
+		            	notifyRegionUpdate("Región " + param.getId());
+		            } catch (RemoteException e) { }
+					
+					
 					break;
 					
 				case DETECTOR_EXITED_REGION:
 					mMusicTracksPlayer.onExitRegion();
-					break;
 					
+		            try {
+		            	notifyRegionUpdate("-");
+		            }
+		            catch (RemoteException e) { }					
+					
+					break;
+				
+				//TODO: not needed?
 				case STOP_SERVICE: 
-					cleanUp();
-					stopSelf();
+					stopAll();
 					break;
 			
 				default:
@@ -112,6 +143,14 @@ public class ControllerService extends Service {
 		}
 	}
 
+	
+	
+	/***********************************************************
+	 * 
+	 * ControllerService: methods
+	 * 
+	 ***********************************************************/
+	
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startid) {
@@ -133,27 +172,9 @@ public class ControllerService extends Service {
 		
 	    // This service's messenger
 		mMessengerMe = new Messenger(mServiceHandler);
-		
-		runOnForeground();
 
 	}
 	
-	private void runOnForeground() {
-		final Intent notificationIntent = new Intent(getApplicationContext(),
-				MainActivity.class);
-		final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-				notificationIntent, 0);
-
-		final Notification notification = new Notification.Builder(
-				getApplicationContext())
-				.setSmallIcon(android.R.drawable.ic_media_play)
-				.setOngoing(true).setContentTitle("MusicalGPS en ejecución")
-				.setContentText("Clic para acceder al menú del programa")
-				.setContentIntent(pendingIntent).build();
-  
-		startForeground(NOTIFICATION_ID, notification);
-	}
-
 	@Override
 	public IBinder onBind(Intent intent) {
 		if (mClientsCounter == 0)
@@ -184,6 +205,14 @@ public class ControllerService extends Service {
 		cleanUp();
 		super.onDestroy();
 	}
+
+    
+	
+	/***********************************************************
+	 * 
+	 * ControllerService: auxiliary functions
+	 * 
+	 ***********************************************************/	
 	
 	
 	private void cleanUp(){
@@ -195,4 +224,46 @@ public class ControllerService extends Service {
 		mServiceHandler.getLooper().quit();
 			
 	}
+	
+	private void stopAll(){
+		cleanUp();
+		stopSelf();
+	}
+	
+	private void runOnForeground() {
+		final Intent notificationIntent = new Intent(getApplicationContext(),
+				MainActivity.class);
+		final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+				notificationIntent, 0);
+
+		final Notification notification = new Notification.Builder(
+				getApplicationContext())
+				.setSmallIcon(android.R.drawable.ic_media_play)
+				.setOngoing(true).setContentTitle("MusicalGPS en ejecución")
+				.setContentText("Clic para acceder al menú del programa")
+				.setContentIntent(pendingIntent).build();
+  
+		startForeground(NOTIFICATION_ID, notification);
+	}
+	
+	private void notifyRegionUpdate(String info) throws RemoteException{
+            Message msg_resp = Message.obtain(null, MainController.UPDATE_CURRENT_REGION);
+            Bundle bundle = new Bundle();
+            bundle.putString("region_name", info);
+            msg_resp.setData(bundle);
+            mMessengerClient.send(msg_resp);
+	}
+	
+	private void notifyError(int errorcode){
+        Message msg_resp = Message.obtain(null, MainController.ERROR);
+        msg_resp.arg1 = errorcode;
+        try {
+			mMessengerClient.send(msg_resp);
+		} catch (RemoteException e) {
+			//cannot recover from error: force stop
+			stopAll();
+			e.printStackTrace();
+		}		
+	}
+	
 }
