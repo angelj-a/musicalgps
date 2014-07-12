@@ -1,6 +1,7 @@
 package compmovil.themebylocation.controllers;
 
 import android.app.Activity;
+import compmovil.themebylocation.models.*;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.Button;
 
 import compmovil.themebylocation.ControllerService;
 import compmovil.themebylocation.R;
+import compmovil.themebylocation.models.Region;
 import compmovil.themebylocation.views.MainView;
 
 
@@ -170,6 +172,7 @@ public class MainController implements OnClickListener {
 		else if (mView.getUnbindButton() == (Button)v){
 			Log.i(TAG,"Click bind");
 			unbind();
+//			notifyEnteredARegion(new RectangularRegion(105));			
 			enableBindingOnView(true);
 		}
 		else if (mView.getStopServiceButton() == (Button)v) {
@@ -177,6 +180,7 @@ public class MainController implements OnClickListener {
 			if (mIsBound) {
 				stop(StopOptions.ONLY_SERVICE);
 				enableBindingOnView(true);
+//				notifyExitedARegion();
 			}
 		}
 		else
@@ -269,4 +273,23 @@ public class MainController implements OnClickListener {
 		mIncomingHandlerThread.getLooper().quit();
 	}
 
+	private void notifyExitedARegion() {
+		Message msg = Message.obtain(null, ControllerService.DETECTOR_EXITED_REGION);
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}			
+	}
+	
+	private void notifyEnteredARegion(Region region) {
+		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
+		msg.obj = region;
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}		
+	}
+	
 }

@@ -6,6 +6,7 @@ import compmovil.themebylocation.models.Effector;
 import compmovil.themebylocation.models.MusicPlayerEffector;
 import compmovil.themebylocation.models.RectangularRegion;
 import compmovil.themebylocation.models.RegionSensor;
+import compmovil.themebylocation.models.ThemePerRegionManager;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -57,7 +58,7 @@ public class ControllerService extends Service {
 	private Messenger mMessengerMe;
 	private Messenger mMessengerClient;
 	
-	
+	private ThemePerRegionManager mThemePerRegionManager;
 	private Effector mMusicTracksPlayer;
 	private RegionSensor mRegionSensor;
 	
@@ -82,7 +83,16 @@ public class ControllerService extends Service {
 			switch (msg.what) {
 			
 				case REGISTER_CLIENT_HANDLER:
-					Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
+					//Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
+					mThemePerRegionManager = new ThemePerRegionManager();
+					try {
+						//TODO: make it load them from a database
+						mThemePerRegionManager.newAssociation(105, R.raw.region105);
+						mThemePerRegionManager.newAssociation(112, R.raw.region112);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
 					mMessengerClient = msg.replyTo;
 					if (mRegionSensor == null) {
 						mRegionSensor = new RegionSensor(mMessengerMe);
@@ -97,13 +107,14 @@ public class ControllerService extends Service {
 						mRegionSensor.startSensing();
 					}					
 					if (mMusicTracksPlayer == null) {
-						mMusicTracksPlayer = new MusicPlayerEffector(getApplicationContext()); 
+						mMusicTracksPlayer = new MusicPlayerEffector(getApplicationContext(), mThemePerRegionManager); 
 						try {
 							mMusicTracksPlayer.initialize();
 						} catch (Exception e) {
 							notifyError(MainController.ERROR_FAILED_INITIALIZING_MUSIC_PLAYER);
 							e.printStackTrace();
 							stopAll();
+							return;
 						}
 					}
 					runOnForeground();
@@ -172,6 +183,8 @@ public class ControllerService extends Service {
 		
 	    // This service's messenger
 		mMessengerMe = new Messenger(mServiceHandler);
+		
+		mThemePerRegionManager = new ThemePerRegionManager();
 
 	}
 	
@@ -180,6 +193,7 @@ public class ControllerService extends Service {
 		if (mClientsCounter == 0)
 		{
 			mClientsCounter++;
+			//TODO: remove
 			Toast.makeText(getApplicationContext(), "Bindeado", Toast.LENGTH_SHORT).show();
 			return mMessengerMe.getBinder();
 		}

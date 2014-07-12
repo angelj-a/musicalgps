@@ -26,16 +26,12 @@ public class RegionSensor {
 
 	
 	//MOCK LOCATIONS:
-    //private static final String PROVIDER = "flp";
     private static final double LAT0 = 37;
     private static final double LNG0 = -122;
     private static final double LAT1 = 38;
     private static final double LNG1 = -122.5;
     private static final float ACCURACY = 0.0f;
-    /*
-     * From input arguments, create a single Location with provider set to
-     * "flp"
-     */
+
     public Location createLocation(double lat, double lng, float accuracy) {
         // Create a new Location
         Location newLocation = new Location(LocationManager.GPS_PROVIDER);
