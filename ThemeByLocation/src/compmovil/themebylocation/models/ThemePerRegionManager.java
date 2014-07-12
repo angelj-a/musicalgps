@@ -1,40 +1,38 @@
 package compmovil.themebylocation.models;
 
+import android.annotation.SuppressLint;
 import java.util.HashMap;
 import java.util.Map;
 
-import compmovil.themebylocation.R;
-
 public class ThemePerRegionManager {
 	
-	private Map mMap_RegionId_ThemeName;
+	private Map<Integer, String> mMap_RegionId_ThemeName;
 	
-	//TODO: change HashMap<Integer,Integer> to HashMap<Integer,String>
-	//TODO: (later) change HashMap<Integer,String> to HashMap<Region,String> 
+	//TODO: change HashMap<Integer,String> to HashMap<Region,String> 
 
+	@SuppressLint("UseSparseArrays")
 	public ThemePerRegionManager() {
-		mMap_RegionId_ThemeName = new HashMap<Integer,Integer>();
+		mMap_RegionId_ThemeName = new HashMap<Integer,String>();
 		
-		//mMap_RegionId_ThemeName.put(105, R.raw.region105);
-		//mMap_RegionId_ThemeName.put(112, R.raw.region112);
+		//MOCK
+		mMap_RegionId_ThemeName.put(105, "android.resource://compmovil.themebylocation/raw/region105");
+		mMap_RegionId_ThemeName.put(112, "android.resource://compmovil.themebylocation/raw/region112");
 	}
 	
 	
-	public void newAssociation(Integer regionid, Integer theme) throws Exception{
-		Integer dummy_ = 0;
+	public void newAssociation(Integer regionid, String theme) throws Exception{
 		if (mMap_RegionId_ThemeName.containsKey(regionid))
 			throw new Exception("La región ya está asociada a otro tema");
 		else
 			changeAssociation(regionid, theme);
 	}
 	
-	public void changeAssociation(Integer regionid, Integer theme){
-		Integer dummy_ = 0;
+	public void changeAssociation(Integer regionid, String theme){
 		mMap_RegionId_ThemeName.put(regionid, theme);
 	}
 	
-	public Integer getTheme(Integer regionid){
-		return (Integer) mMap_RegionId_ThemeName.get(regionid);		
+	public String getTheme(Integer regionid){
+		return mMap_RegionId_ThemeName.get(regionid);		
 	}
 	
 	

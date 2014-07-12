@@ -4,10 +4,9 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
-
-import compmovil.themebylocation.R;
 
 public class ThreadMusicPlayer {
 	
@@ -17,30 +16,30 @@ public class ThreadMusicPlayer {
 	private HandlerThread mPlayerThread;
 	private Handler mPlayerHandler;
 	
-	private Integer mCurrentSong;
-	
-	private Runnable mRunnablePrepare = new Runnable()
-	{
-		@Override
-		public void run() {
-			try {
-				mPlayer.prepare();
-			}
-			catch (IllegalStateException e) {}
-			catch (IOException e) {}
-		}			
-	};
+	private String mCurrentSong;
 	
 	private Runnable mRunnablePlaySong = new Runnable()
 	{
     	@Override
     	public void run() {		
     		if (mPlayer != null) {
-				if (mPlayer.isPlaying()) {					
-					//TODO: to be able to choose a song
-					mPlayer.seekTo(0);
+				try {
+					if (mPlayer.isPlaying()) {					
+						mPlayer.reset();
+					}					
+					//TODO: change 
+					mPlayer.setDataSource(mContext, Uri.parse(mCurrentSong));
+			        mPlayer.prepare();
+			        mPlayer.start();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				mPlayer.start();
 			}		
 		}
 	};
@@ -50,6 +49,7 @@ public class ThreadMusicPlayer {
     	@Override
     	public void run() {
    			mPlayer.stop();
+   			mPlayer.reset();
     	}
 	};
 	
@@ -70,7 +70,7 @@ public class ThreadMusicPlayer {
 	}
 	
 	public void run() throws Exception{
-		mPlayer = MediaPlayer.create(mContext, R.raw.region105);
+		mPlayer = new MediaPlayer();
 		if (mPlayer != null)
 			mPlayer.setLooping(true);
 		else
@@ -82,14 +82,13 @@ public class ThreadMusicPlayer {
 	}
 	
 	public void play(Region r){
-		//TODO: use region r
+		//TODO: avoid casting r from Region to RectangularRegion
 		mCurrentSong = mThemePerRegionManager.getTheme(((RectangularRegion)r).getId());
 		mPlayerHandler.post(mRunnablePlaySong);		
 	}
 		
 	public void stop(){
 		mPlayerHandler.post(mRunnableStopSong);
-		mPlayerHandler.post(mRunnablePrepare);
 	}
 	
 	public void release(){
