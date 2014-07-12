@@ -15,8 +15,8 @@ public class ThemePerRegionManager {
 		mMap_RegionId_ThemeName = new HashMap<Integer,String>();
 		
 		//MOCK
-		mMap_RegionId_ThemeName.put(105, "android.resource://compmovil.themebylocation/raw/region105");
-		mMap_RegionId_ThemeName.put(112, "android.resource://compmovil.themebylocation/raw/region112");
+		//mMap_RegionId_ThemeName.put(105, "android.resource://compmovil.themebylocation/raw/region105");
+		//mMap_RegionId_ThemeName.put(112, "android.resource://compmovil.themebylocation/raw/region112");
 	}
 	
 	

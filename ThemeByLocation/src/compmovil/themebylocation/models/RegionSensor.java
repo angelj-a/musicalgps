@@ -24,44 +24,18 @@ public class RegionSensor {
 	
 	private LocationManager mLocationManager;	
 
-	
-	//MOCK LOCATIONS:
-    private static final double LAT0 = 37;
-    private static final double LNG0 = -122;
-    private static final double LAT1 = 38;
-    private static final double LNG1 = -122.5;
-    private static final float ACCURACY = 0.0f;
-
-    public Location createLocation(double lat, double lng, float accuracy) {
-        // Create a new Location
-        Location newLocation = new Location(LocationManager.GPS_PROVIDER);
-        newLocation.setLatitude(lat);
-        newLocation.setLongitude(lng);
-        newLocation.setAccuracy(accuracy);
-        return newLocation;
-    }
-
-    // Example of creating a new Location from test data
-    Location testLocation0 = createLocation(LAT0, LNG0, ACCURACY);
-    Location testLocation1 = createLocation(LAT1, LNG1, ACCURACY);
-    
-    Location testLocation0B = createLocation(LAT0+10f, LNG0, ACCURACY);
-    Location testLocation1B = createLocation(LAT1+10f, LNG1, ACCURACY);
-
-	
-	//HARDCODED REGION:
+	private RegionsManager mRegionsManager;
 	private Region mCurrentRegion;
-	private Region[] mRegionsContainer = new Region[2];
+	
 	private static Region NO_REGION = null; 
-    
-	
-	
 	
 	
     private HandlerThread mHandlerThread;
     private Handler mHandler;
 	private Messenger mObserverMessenger;
 
+	
+	
 	
 	
 	/***********************************************************
@@ -72,9 +46,9 @@ public class RegionSensor {
 	private LocationListener mLocationListener = new LocationListener(){
     	public void onLocationChanged(Location location) {
     		if (location != null) {
-    			 //Check if you just entered in a region
+    			//Check if you just entered in a region
     			if (mCurrentRegion == NO_REGION) {
-    				mCurrentRegion = insideRegion(location);
+    				mCurrentRegion = mRegionsManager.insideWhichRegion(location);
     				if (mCurrentRegion != NO_REGION) {
     					notifyEnteredARegion(mCurrentRegion);
     				}
@@ -106,16 +80,7 @@ public class RegionSensor {
 	
 	public RegionSensor(Messenger messenger) {
 		mObserverMessenger = messenger;
-		
-		//TODO:REMOVE LATER. Replace it with Regions Manager or something like that
-		try {
-			mRegionsContainer[0] = new RectangularRegion(testLocation0, testLocation1);
-			mRegionsContainer[1] = new RectangularRegion(testLocation0B, testLocation1B);
-			((RectangularRegion)mRegionsContainer[0]).setId(105);
-			((RectangularRegion)mRegionsContainer[1]).setId(112);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		mRegionsManager = new RegionsManager();
 	}
 	
 	public void initialize(Context ctx) throws Exception{
@@ -125,37 +90,6 @@ public class RegionSensor {
 			throw new Exception("No hay disponible GPS");
 		
 		mHandlerThread = new HandlerThread("GPS Thread");
-		
-//		//MOCK
-//		mLocationManager.addTestProvider (LocationManager.GPS_PROVIDER,
-//                "requiresNetwork" == "",
-//                "requiresSatellite" == "",
-//                "requiresCell" == "",
-//                "hasMonetaryCost" == "",
-//                "supportsAltitude" == "",
-//                "supportsSpeed" == "",
-//                "supportsBearing" == "",
-//                 android.location.Criteria.POWER_LOW,
-//                 android.location.Criteria.ACCURACY_FINE);      
-//		
-//		mLocationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
-//
-//		mLocationManager.setTestProviderStatus(LocationManager.GPS_PROVIDER,
-//		                             LocationProvider.AVAILABLE,
-//		                             null,System.currentTimeMillis());    
-//		  
-//		mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, testLocationCurrent);
-//		
-//
-//		for (x=1; x<11; x++)
-//	    mHandler.postDelayed(new Runnable() {
-//	                    @Override
-//	                    public void run() {
-//	                            mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER,
-//	                            		createLocation(LAT0+i*x, LNG0, ACCURACY));
-//	                    }
-//	            }, 2000*x);
-
 	}
 	
 	public void startSensing() {
@@ -201,15 +135,6 @@ public class RegionSensor {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}		
-	}
-	
-	
-	private Region insideRegion(Location location) {
-		for (Region r : mRegionsContainer) {
-			if (r.isInsideRegion(location))	
-				return r; 
-		}
-		return NO_REGION;
 	}
 
 }

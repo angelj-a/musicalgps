@@ -87,8 +87,8 @@ public class ControllerService extends Service {
 					mThemePerRegionManager = new ThemePerRegionManager();
 					try {
 						//TODO: make it load them from a database
-						mThemePerRegionManager.newAssociation(105, R.raw.region105);
-						mThemePerRegionManager.newAssociation(112, R.raw.region112);
+						mThemePerRegionManager.newAssociation(105, "android.resource://compmovil.themebylocation/raw/region105");
+						mThemePerRegionManager.newAssociation(112, "android.resource://compmovil.themebylocation/raw/region112");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}

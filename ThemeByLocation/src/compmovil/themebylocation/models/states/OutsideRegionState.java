@@ -6,7 +6,7 @@ import compmovil.themebylocation.models.ThreadMusicPlayer;
 public class OutsideRegionState implements PlayerState {
 
 	private ThreadMusicPlayer mThreadedMusicPlayer;
-	private InsideRegionState mStateInsideReg;
+	private InsideRegionState mStateInsideReg; //to avoid creating multiple instances every time the MP changes state
 
 	
 	public OutsideRegionState(ThreadMusicPlayer threadMP){
