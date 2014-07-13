@@ -1,18 +1,6 @@
 package compmovil.themebylocation.models;
 
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.util.Log;
-
-import compmovil.themebylocation.ControllerService;
+import compmovil.themebylocation.models.strategies.SensingStrategy;
 
 public class RegionSensor {
 	
@@ -20,55 +8,10 @@ public class RegionSensor {
 	 * 
 	 * RegionSensor: attributes
 	 * 
-	 ***********************************************************/
-	
-	private LocationManager mLocationManager;	
+	 ************************************************************/	
 
-	private RegionsManager mRegionsManager;
-	private Region mCurrentRegion;
-	
-	private static Region NO_REGION = null; 
-	
-	
-    private HandlerThread mHandlerThread;
-    private Handler mHandler;
-	private Messenger mObserverMessenger;
-
-	
-	
-	
-	
-	/***********************************************************
-	 * 
-	 * RegionSensor: classes
-	 * 
-	 ***********************************************************/
-	private LocationListener mLocationListener = new LocationListener(){
-    	public void onLocationChanged(Location location) {
-    		if (location != null) {
-    			//Check if you just entered in a region
-    			if (mCurrentRegion == NO_REGION) {
-    				mCurrentRegion = mRegionsManager.insideWhichRegion(location);
-    				if (mCurrentRegion != NO_REGION) {
-    					notifyEnteredARegion(mCurrentRegion);
-    				}
-    			}
-    			 //Check if you're still inside the region
-    			else if (mCurrentRegion.isInsideRegion(location)){
-        			Log.i("THEMELOCATION", location.getLatitude() + " " + location.getLongitude() + " - Estás dentro de la region");
-    			}
-    			else {
-    				Log.i("THEMELOCATION", location.getLatitude() + " " + location.getLongitude() + " - Saliste de la region");
-    				notifyExitedARegion();
-        			mCurrentRegion = null;
-    			}
-    		}
-    	}
-    	
-    	public void onProviderDisabled(String provider) {}
-    	public void onProviderEnabled(String provider) 	{} 
-    	public void onStatusChanged(String provider, int status, Bundle extras){}
-    };	
+	private SensingStrategy mSensingStrategy;
+	private boolean mIsStopped;
     
     
 	
@@ -77,64 +20,40 @@ public class RegionSensor {
 	 * RegionSensor: methods
 	 * 
 	 ***********************************************************/
-	
-	public RegionSensor(Messenger messenger) {
-		mObserverMessenger = messenger;
-		mRegionsManager = new RegionsManager();
+    
+	public RegionSensor(SensingStrategy strategy) {
+		if (strategy == null)
+			throw new NullPointerException("El parámetro no puede ser null");
+		
+		mSensingStrategy = strategy;
+		mIsStopped = true;
 	}
 	
-	public void initialize(Context ctx) throws Exception{
-		mLocationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-		
-		if (!(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)))
-			throw new Exception("No hay disponible GPS");
-		
-		mHandlerThread = new HandlerThread("GPS Thread");
+	
+	public void initialize() throws Exception {
+		mSensingStrategy.initialize();
 	}
 	
 	public void startSensing() {
-		mHandlerThread.start();
-	    mHandler = new Handler(mHandlerThread.getLooper());
-	    mHandler.post(
-	            new Runnable() {
-	                    @Override
-	                    public void run() {
-	                            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 50, mLocationListener);
-	                    }
-	            });	
+		mSensingStrategy.startSensing();
+		mIsStopped = false;
 	}
 	
 	
 	public void stopSensing() {
-		mLocationManager.removeUpdates(mLocationListener);
-		if (mHandlerThread != null)
-			mHandlerThread.getLooper().quit();
-	}
-
-	
-	/***********************************************************
-	 * 
-	 * RegionSensor: auxiliary functions
-	 * 
-	 ***********************************************************/
-
-	private void notifyExitedARegion() {
-		Message msg = Message.obtain(null, ControllerService.DETECTOR_EXITED_REGION);
-		try {
-			mObserverMessenger.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}			
+		mSensingStrategy.stopSensing();
+		mIsStopped = true;
 	}
 	
-	private void notifyEnteredARegion(Region region) {
-		Message msg = Message.obtain(null, ControllerService.DETECTOR_ENTERED_REGION);
-		msg.obj = region;
-		try {
-			mObserverMessenger.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}		
+	// returns true if the strategy was set successfully
+	public boolean setSensingStrategy(SensingStrategy strategy) {
+		if (mIsStopped) {
+			if (strategy == null)
+				throw new NullPointerException("El parámetro no puede ser null");
+			mSensingStrategy = strategy;
+			return true;
+		}
+		else
+			return false;
 	}
-
 }

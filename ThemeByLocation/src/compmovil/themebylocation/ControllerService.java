@@ -4,9 +4,11 @@ package compmovil.themebylocation;
 import compmovil.themebylocation.controllers.MainController;
 import compmovil.themebylocation.models.Effector;
 import compmovil.themebylocation.models.MusicPlayerEffector;
+import compmovil.themebylocation.models.Notifier;
 import compmovil.themebylocation.models.RectangularRegion;
 import compmovil.themebylocation.models.RegionSensor;
 import compmovil.themebylocation.models.ThemePerRegionManager;
+import compmovil.themebylocation.models.strategies.GPSLocationListenerSensingStrategy;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -84,20 +86,23 @@ public class ControllerService extends Service {
 			
 				case REGISTER_CLIENT_HANDLER:
 					//Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
+					mMessengerClient = msg.replyTo;
+					
 					mThemePerRegionManager = new ThemePerRegionManager();
 					try {
-						//TODO: make it load them from a database
+						//TODO: load them from a database
 						mThemePerRegionManager.newAssociation(105, "android.resource://compmovil.themebylocation/raw/region105");
 						mThemePerRegionManager.newAssociation(112, "android.resource://compmovil.themebylocation/raw/region112");
+						mThemePerRegionManager.newAssociation(120, "android.resource://compmovil.themebylocation/raw/region120");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 					
-					mMessengerClient = msg.replyTo;
 					if (mRegionSensor == null) {
-						mRegionSensor = new RegionSensor(mMessengerMe);
+						mRegionSensor = new RegionSensor(new GPSLocationListenerSensingStrategy(getApplicationContext(),
+																								new Notifier(mMessengerMe)));
 						try {
-							mRegionSensor.initialize(getApplicationContext());
+							mRegionSensor.initialize();
 						} catch (Exception e) {
 							notifyError(MainController.ERROR_LOCATION_PROVIDER_NOT_DETECTED);
 							e.printStackTrace();
