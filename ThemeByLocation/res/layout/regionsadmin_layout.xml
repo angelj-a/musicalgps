@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-   android:stretchColumns="1" >
-    
-        <TableRow>
-
-        <TextView
-            android:layout_column="1"
-            android:padding="3dip"
-            android:text="Open..."
-            android:textSize="24sp" />
-
-        <TextView
-            android:gravity="right"
-            android:padding="3dip"
-            android:text="Ctrl-O"
-            android:textSize="24sp" />
-    </TableRow>
-    
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/tableRegions"
+    android:stretchColumns="1">
 
 </TableLayout>

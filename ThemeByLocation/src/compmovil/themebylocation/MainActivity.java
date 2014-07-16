@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import compmovil.themebylocation.controllers.MainController;
 import compmovil.themebylocation.dbeditor.EditorActivity;
@@ -100,7 +99,7 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-	    menu.findItem(R.id.manage_regions).setEnabled(!maincontroller.isServiceRunning()); // here pass the index of save menu item
+	    menu.findItem(R.id.manage_regions).setEnabled(!maincontroller.isServiceRunning());
 	    return super.onPrepareOptionsMenu(menu);
 
 	}

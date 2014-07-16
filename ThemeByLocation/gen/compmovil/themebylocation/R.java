@@ -17,14 +17,17 @@ public final class R {
     }
     public static final class id {
         public static final int info_text=0x7f080003;
-        public static final int manage_regions=0x7f080004;
+        public static final int manage_regions=0x7f080006;
+        public static final int spinner1=0x7f080005;
         public static final int startbutton=0x7f080002;
         public static final int stopservicebutton=0x7f080001;
+        public static final int tableRegions=0x7f080004;
         public static final int unbindbutton=0x7f080000;
     }
     public static final class layout {
         public static final int main_layout=0x7f030000;
         public static final int regionsadmin_layout=0x7f030001;
+        public static final int spinner_themes=0x7f030002;
     }
     public static final class menu {
         public static final int options_menu=0x7f070000;
