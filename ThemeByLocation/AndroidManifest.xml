@@ -27,6 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".dbeditor.EditorActivity"
+            android:label="@string/title_activity_editor" >
+        </activity>
+        
         <service
             android:name=".ControllerService">
         </service>   

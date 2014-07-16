@@ -27,7 +27,8 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
 	private Notifier mNotifier;
 	
 	private LocationListener mLocationListener = new LocationListener(){
-    	public void onLocationChanged(Location location) {
+    	@Override
+		public void onLocationChanged(Location location) {
     		if (location != null) {
     			//Check if you just entered in a region
     			if (mCurrentRegion == NO_REGION) {
@@ -48,9 +49,12 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
     		}
     	}
     	
-    	public void onProviderDisabled(String provider) {}
-    	public void onProviderEnabled(String provider) 	{} 
-    	public void onStatusChanged(String provider, int status, Bundle extras){}
+    	@Override
+		public void onProviderDisabled(String provider) {}
+    	@Override
+		public void onProviderEnabled(String provider) 	{} 
+    	@Override
+		public void onStatusChanged(String provider, int status, Bundle extras){}
     };
 
 	private Runnable mRunnableRequestLocUpdates = new Runnable() {

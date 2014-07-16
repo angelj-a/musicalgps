@@ -89,7 +89,8 @@ public class MainController implements OnClickListener {
     }
     
     private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
+        @Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
 
             try {
@@ -104,7 +105,8 @@ public class MainController implements OnClickListener {
             mIsRunning = true;
         }
 
-        public void onServiceDisconnected(ComponentName className) {
+        @Override
+		public void onServiceDisconnected(ComponentName className) {
             // This is called when the connection with the service has been unexpectedly disconnected - process crashed.
             mService = null;
             mIsBound = false;
@@ -113,7 +115,8 @@ public class MainController implements OnClickListener {
     };   
     
     private Runnable mRunnableUpdateInfo = new Runnable() { 
-        public void run() 
+        @Override
+		public void run() 
         {
         	Log.i(TAG,"info = " + mInfo);
         	mView.displayInfo(mInfo); 
@@ -121,7 +124,8 @@ public class MainController implements OnClickListener {
     };
     
     private Runnable mRunnableBackToInitialUIState  = new Runnable(){
-    	public void run()
+    	@Override
+		public void run()
     	{
     		enableBindingOnView(true);
     	}

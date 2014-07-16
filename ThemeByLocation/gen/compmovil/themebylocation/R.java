@@ -12,15 +12,22 @@ public final class R {
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
+        public static final int ic_menu_edit=0x7f020001;
+        public static final int ic_menu_mapmode=0x7f020002;
     }
     public static final class id {
-        public static final int info_text=0x7f070003;
-        public static final int startbutton=0x7f070002;
-        public static final int stopservicebutton=0x7f070001;
-        public static final int unbindbutton=0x7f070000;
+        public static final int info_text=0x7f080003;
+        public static final int manage_regions=0x7f080004;
+        public static final int startbutton=0x7f080002;
+        public static final int stopservicebutton=0x7f080001;
+        public static final int unbindbutton=0x7f080000;
     }
     public static final class layout {
         public static final int main_layout=0x7f030000;
+        public static final int regionsadmin_layout=0x7f030001;
+    }
+    public static final class menu {
+        public static final int options_menu=0x7f070000;
     }
     public static final class raw {
         public static final int region105=0x7f040000;
@@ -29,9 +36,11 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f050000;
+        public static final int manage_regions=0x7f050006;
         public static final int start_service=0x7f050005;
         public static final int str_manual_stop_song=0x7f050004;
         public static final int str_stop_service=0x7f050003;
+        public static final int title_activity_editor=0x7f050007;
         public static final int track_freq_default=0x7f050002;
         public static final int track_freq_label=0x7f050001;
     }
