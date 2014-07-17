@@ -18,8 +18,9 @@ public class MainActivity extends Activity {
 	private MainController maincontroller;
 	private MainView mainview;
 	
+	
+//	private Menu mMenu;
 	private boolean mIsControllerBound;
-	//private boolean mBackPressed = false;
 	
 	
 	@Override
@@ -82,6 +83,7 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.options_menu, menu);
+	    //mMenu = menu;
 	    return true;
 	}
 	

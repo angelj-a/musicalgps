@@ -1,6 +1,7 @@
 package compmovil.themebylocation.dbeditor;
 
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -28,8 +29,16 @@ public class EditorActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.regionsadmin_layout);
         
+        RegionsDbHelper dbHelper = new RegionsDbHelper(getBaseContext());
+        
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+      
+        
         mRegionEditor = new RegionEditor(this);
         mThemeSelector = new ThemeSelector(this);
+        
+		initializeRegionsAdmin();
+		initializeTable();
         
 //		mThemesManager = new ThemesManager();
 //		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mThemesManager.getThemesNames());
@@ -47,8 +56,6 @@ public class EditorActivity extends Activity {
 	@Override
     protected void onStart(){
 		super.onStart();
-		initializeRegionsAdmin();
-		initializeTable();
 	}  
 
 	@Override
@@ -88,7 +95,7 @@ public class EditorActivity extends Activity {
 		TableLayout table = (TableLayout) findViewById(R.id.tableRegions);
 
 
-	    for (int i = 0; i < 2; i++) {
+	    for (int i = 0; i < 6; i++) {
 
 	        TableRow row= new TableRow(this);
 	        TableRow.LayoutParams layoutParams= new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
@@ -112,12 +119,12 @@ public class EditorActivity extends Activity {
 	        
 	        if (i%2 == 0){
 	        	idRow.setBackgroundColor(Color.parseColor("#777777"));
-	        	regionName.setBackgroundColor(Color.parseColor("#777777"));
+	        	regionName.setBackgroundColor(Color.parseColor("#888888"));
 	        	themeName.setBackgroundColor(Color.parseColor("#777777"));
 	        }
 	        else {
 	        	idRow.setBackgroundColor(Color.parseColor("#CCCCCC"));
-	        	regionName.setBackgroundColor(Color.parseColor("#CCCCCC"));
+	        	regionName.setBackgroundColor(Color.parseColor("#DDDDDD"));
 	        	themeName.setBackgroundColor(Color.parseColor("#CCCCCC"));	        	
 	        }
 	        

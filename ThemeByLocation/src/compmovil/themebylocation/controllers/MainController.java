@@ -255,7 +255,7 @@ public class MainController implements OnClickListener {
 	private void enableBindingOnView(boolean enable){
 		mView.enableStartButton(enable);
 		mView.enableUnbindButton(!enable);
-		mView.enableStopserviceButton(!enable);		
+		mView.enableStopserviceButton(!enable);
 	}
 	
 	private void unbind(){
