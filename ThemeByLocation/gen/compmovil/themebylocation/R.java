@@ -12,25 +12,34 @@ public final class R {
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
-        public static final int ic_menu_edit=0x7f020001;
-        public static final int ic_menu_mapmode=0x7f020002;
+        public static final int ic_menu_add=0x7f020001;
+        public static final int ic_menu_edit=0x7f020002;
+        public static final int ic_menu_mapmode=0x7f020003;
+        public static final int ic_menu_refresh=0x7f020004;
     }
     public static final class id {
+        public static final int add_region=0x7f08000a;
         public static final int info_text=0x7f080003;
-        public static final int manage_regions=0x7f080006;
-        public static final int spinner1=0x7f080005;
+        public static final int manage_regions=0x7f080009;
+        public static final int refresh_table=0x7f08000b;
+        public static final int region_latitude_edit=0x7f080005;
+        public static final int region_longitude_edit=0x7f080006;
+        public static final int region_name_edit=0x7f080004;
+        public static final int spinner1=0x7f080008;
         public static final int startbutton=0x7f080002;
         public static final int stopservicebutton=0x7f080001;
-        public static final int tableRegions=0x7f080004;
+        public static final int tableRegions=0x7f080007;
         public static final int unbindbutton=0x7f080000;
     }
     public static final class layout {
         public static final int main_layout=0x7f030000;
-        public static final int regionsadmin_layout=0x7f030001;
-        public static final int spinner_themes=0x7f030002;
+        public static final int region_edit_dialog=0x7f030001;
+        public static final int regionsadmin_layout=0x7f030002;
+        public static final int spinner_themes=0x7f030003;
     }
     public static final class menu {
         public static final int options_menu=0x7f070000;
+        public static final int region_editor_menu=0x7f070001;
     }
     public static final class raw {
         public static final int region105=0x7f040000;
@@ -38,8 +47,10 @@ public final class R {
         public static final int region120=0x7f040002;
     }
     public static final class string {
+        public static final int add_region=0x7f050008;
         public static final int app_name=0x7f050000;
         public static final int manage_regions=0x7f050006;
+        public static final int refresh_table=0x7f050009;
         public static final int start_service=0x7f050005;
         public static final int str_manual_stop_song=0x7f050004;
         public static final int str_stop_service=0x7f050003;

@@ -8,5 +8,7 @@
     <string name="start_service">Iniciar/Rebind</string>
     <string name="manage_regions">Administrar Regiones</string>
     <string name="title_activity_editor">Administrador de Regiones</string>
+    <string name="add_region">Nueva Región</string>
+    <string name="refresh_table">Actualizar</string>
 
 </resources>
