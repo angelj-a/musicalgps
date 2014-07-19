@@ -2,6 +2,7 @@ package compmovil.themebylocation.dbeditor;
 
 import android.location.Location;
 import android.location.LocationManager;
+
 import compmovil.themebylocation.models.RectangularRegion;
 
 public class RegionModel {

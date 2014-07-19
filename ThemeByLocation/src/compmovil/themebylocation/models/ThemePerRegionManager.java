@@ -1,8 +1,9 @@
 package compmovil.themebylocation.models;
 
-import android.annotation.SuppressLint;
 import java.util.HashMap;
 import java.util.Map;
+
+import android.annotation.SuppressLint;
 
 public class ThemePerRegionManager {
 	

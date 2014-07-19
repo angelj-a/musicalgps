@@ -1,12 +1,11 @@
 package compmovil.themebylocation.views;
 
-import compmovil.themebylocation.R;
-
 import android.app.Activity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import compmovil.themebylocation.R;
 
 
 

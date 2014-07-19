@@ -1,15 +1,9 @@
 package compmovil.themebylocation.dbeditor;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-
-import compmovil.themebylocation.R;
-import compmovil.themebylocation.models.ThemesManager;
 
 public class ThemeSelector implements OnItemSelectedListener {
 	

@@ -1,15 +1,6 @@
 package compmovil.themebylocation;
 
 
-import compmovil.themebylocation.controllers.MainController;
-import compmovil.themebylocation.models.Effector;
-import compmovil.themebylocation.models.MusicPlayerEffector;
-import compmovil.themebylocation.models.Notifier;
-import compmovil.themebylocation.models.RectangularRegion;
-import compmovil.themebylocation.models.RegionSensor;
-import compmovil.themebylocation.models.ThemePerRegionManager;
-import compmovil.themebylocation.models.strategies.GPSLocationListenerSensingStrategy;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +16,15 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
+
+import compmovil.themebylocation.controllers.MainController;
+import compmovil.themebylocation.models.Effector;
+import compmovil.themebylocation.models.MusicPlayerEffector;
+import compmovil.themebylocation.models.Notifier;
+import compmovil.themebylocation.models.RectangularRegion;
+import compmovil.themebylocation.models.RegionSensor;
+import compmovil.themebylocation.models.ThemePerRegionManager;
+import compmovil.themebylocation.models.strategies.GPSLocationListenerSensingStrategy;
 
 
 public class ControllerService extends Service {

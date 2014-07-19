@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import compmovil.themebylocation.R;
 import compmovil.themebylocation.map.GoogleMapActivity;
@@ -115,10 +116,24 @@ public class EditorActivity extends Activity {
 	    }
 	}	
 	
+	@Override
+	protected void onActivityResult(int reqCode, int resCode, Intent data){
+	    super.onActivityResult(reqCode, resCode, data);
+	    if (resCode == RESULT_CANCELED)
+	    	return;
+	    if (reqCode == GoogleMapActivity.REGION_BOUNDS)
+	    	if (resCode == RESULT_OK)
+	    		Toast.makeText(this, "("+ data.getDoubleExtra(GoogleMapActivity.LATITUDE0, 0) +
+							 	","+ data.getDoubleExtra(GoogleMapActivity.LONGITUDE0, 0) +
+							 	" ("+ data.getDoubleExtra(GoogleMapActivity.LATITUDE1, 0) +
+							 	","+ data.getDoubleExtra(GoogleMapActivity.LONGITUDE1, 0) + ")",				
+							Toast.LENGTH_LONG).show();		
+	}
+
 	
 
 	private void launchMapActivity() {
-    	startActivity(new Intent(this, GoogleMapActivity.class));		
+		startActivityForResult(new Intent(this, GoogleMapActivity.class), GoogleMapActivity.REGION_BOUNDS);		
 	}
 
 

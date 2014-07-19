@@ -10,5 +10,7 @@
     <string name="title_activity_editor">Administrador de Regiones</string>
     <string name="add_region">Nueva Región</string>
     <string name="refresh_table">Actualizar</string>
+    <string name="discard_region">Cancelar</string>
+    <string name="save_region">Guardar</string>
 
 </resources>

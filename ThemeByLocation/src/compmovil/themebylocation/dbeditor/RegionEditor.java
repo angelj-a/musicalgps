@@ -9,13 +9,13 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import compmovil.themebylocation.R;
 
 public class RegionEditor implements OnClickListener {
 	
+	private static final int NEW_REGION_ID = -1; 
 	private Context mActivity;
 	private DBAdapter mRegionsDB;
 	
@@ -30,7 +30,7 @@ public class RegionEditor implements OnClickListener {
       };
 
     public void addRegion(){
-    	createRegionEditDialog(-1).show();
+    	createRegionEditDialog(NEW_REGION_ID).show();
     }
       
     private Dialog createRegionEditDialog(int regionId) {
@@ -43,7 +43,7 @@ public class RegionEditor implements OnClickListener {
           TextView longitude0View  = (TextView)view.findViewById(R.id.region_longitude_edit);
                    
           //Load parameters from database
-          if (regionId != -1){
+          if (regionId != NEW_REGION_ID){
         	  Cursor c = mRegionsDB.getRegion(regionId);
         	  regionNameView.setText(c.getString(c.getColumnIndex("reg_name")));
         	  latitude0View.setText(c.getString(c.getColumnIndex("reg_latitude_s")));
