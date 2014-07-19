@@ -3,6 +3,7 @@ package compmovil.themebylocation.dbeditor;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,6 +14,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import compmovil.themebylocation.R;
+import compmovil.themebylocation.map.GoogleMapActivity;
 
 public class EditorActivity extends Activity {
 	
@@ -105,12 +107,20 @@ public class EditorActivity extends Activity {
 	        case R.id.refresh_table:
 	        	refreshTable();
 	        	return true;
+	        case R.id.test_googlemap_activity:
+	        	launchMapActivity();
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}	
 	
 	
+
+	private void launchMapActivity() {
+    	startActivity(new Intent(this, GoogleMapActivity.class));		
+	}
+
 
 	private void showTable() {		
 		List<RegionModel> listOfRegions = mRegionsThemesDB.getAllRegions();
@@ -140,13 +150,13 @@ public class EditorActivity extends Activity {
 	        themeName.setTextSize(24);
 	        
 	        idRow.setText(Integer.toString(i+1));
-	        idRow.setPaddingRelative(10, 10, 20, 10);
+	        //idRow.setPaddingRelative(10, 10, 20, 10);
 	        idRow.setTextColor(Color.parseColor("#FFFFFF"));
 	        regionName.setText(listOfRegions.get(i).getName());
-	        regionName.setPaddingRelative(2, 10, 2, 10);
+	        //regionName.setPaddingRelative(2, 10, 2, 10);
 	        themeName.setText(listOfThemesNames
 	        					.get(listOfRegions.get(i).getThemeId()));
-	        themeName.setPaddingRelative(2, 10, 20, 10);
+	        //themeName.setPaddingRelative(2, 10, 20, 10);
 	        
 	        if (i%2 == 0){
 	        	idRow.setBackgroundColor(Color.parseColor("#777777"));
