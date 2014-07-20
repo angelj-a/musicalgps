@@ -12,5 +12,11 @@
     <string name="refresh_table">Actualizar</string>
     <string name="discard_region">Cancelar</string>
     <string name="save_region">Guardar</string>
+    <string name="edit_region_name">Cambiar nombre</string>
+    <string name="edit_region_coordinates">Editar en mapa</string>
+    <string name="choose_another_theme">Cambiar tema</string>
+    <string name="delete_region">Borrar región</string>
+    <string name="region_name_txtview">Nombre de la región</string>
+    <string name="region_name_hint">Nombre descriptivo para la región</string>
 
 </resources>

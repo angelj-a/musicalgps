@@ -66,8 +66,8 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
 
 	
 
-	public GPSLocationListenerSensingStrategy(Context ctx, Notifier notifier){
-		mRegionsManager = new RegionsManager();
+	public GPSLocationListenerSensingStrategy(Context ctx, Notifier notifier, RegionsManager regmanager){
+		mRegionsManager = regmanager;
 		mContext = ctx;
 		mNotifier = notifier;
 	}

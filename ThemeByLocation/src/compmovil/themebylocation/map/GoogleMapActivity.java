@@ -23,17 +23,31 @@ import compmovil.themebylocation.R;
 
 public class GoogleMapActivity extends Activity {
 	
+	
+	/***********************************************************
+	 * 
+	 * GoogleMapActivity: attributes and constants
+	 * 
+	 ***********************************************************/
+	
+	public static final String REGION_ID = "id";
+	public static final String REGION_NAME= "name";	
 	public static final String LONGITUDE1 = "longitude1";
 	public static final String LATITUDE1 = "latitude1";
 	public static final String LONGITUDE0 = "longitude0";
 	public static final String LATITUDE0 = "latitude0";
+
+	
 	public static final int REGION_BOUNDS = 1;
+
+	
 	private GoogleMap mMap;
-	private Marker mCorner0;
-	private Marker mCorner1;
+	private Marker mCorner0, mCorner1;
 	private Polygon mRegion;
 	
 	private Intent mResult;
+	
+	private LatLng mMapCameraOnStart;
 	
 	
 	private OnMapClickListener mMapClickListener = new GoogleMap.OnMapClickListener() {		
@@ -41,7 +55,7 @@ public class GoogleMapActivity extends Activity {
 		public void onMapClick(LatLng point) {            	            	
             MarkerOptions marker = new MarkerOptions()
             					.position(new LatLng(point.latitude, point.longitude))
-            					.draggable(true);                           
+            					.draggable(true);
         	
             if (mCorner0 == null) {
         		mCorner0 = mMap.addMarker(marker);
@@ -49,18 +63,19 @@ public class GoogleMapActivity extends Activity {
         		mMap.setOnMarkerDragListener(mMarkerDragListener);
         		
         	}
-        	else {
+        	else if (mCorner1 == null){
         		mCorner1 = mMap.addMarker(marker);
         		//Don't accept any more markers
         		mMap.setOnMapClickListener(null);
 
         		drawRegion();        		
         	}
+        	else
+        		mMap.setOnMapClickListener(null);
 		}
 	};
 	
-	private OnMarkerDragListener mMarkerDragListener = new GoogleMap.OnMarkerDragListener() {
-		
+	private OnMarkerDragListener mMarkerDragListener = new GoogleMap.OnMarkerDragListener() {		
 		@Override
 		public void onMarkerDragStart(Marker marker) {
 			mRegion.remove();
@@ -70,26 +85,20 @@ public class GoogleMapActivity extends Activity {
 		public void onMarkerDragEnd(Marker marker) {
 			drawRegion();
 		}
-		
+
 		@Override
 		public void onMarkerDrag(Marker marker) {
 		}
-	};
-	
-	private void drawRegion(){
-		mRegion = mMap.addPolygon(new PolygonOptions()
-        .add(mCorner0.getPosition(),
-        	 new LatLng(mCorner0.getPosition().latitude, mCorner1.getPosition().longitude),
-        	 mCorner1.getPosition(),
-        	 new LatLng(mCorner1.getPosition().latitude, mCorner0.getPosition().longitude))
-        .strokeColor(Color.BLUE)
-        .strokeWidth(2)
-        .fillColor(Color.BLUE & 0x3FFFFFFF));
-	}
-
+	};	
 	
 	
 	
+	
+	/***********************************************************
+	 * 
+	 * GoogleMapActivity: methods
+	 * 
+	 ***********************************************************/
 	
 	
 	@Override
@@ -100,15 +109,40 @@ public class GoogleMapActivity extends Activity {
 		if (mMap == null)
 			mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		
-        LatLng sydney = new LatLng(-33.867, 151.206);
-
-        mMap.setMyLocationEnabled(false);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
-
-        mMap.setOnMapClickListener(mMapClickListener);        
-	
+				
+		setMapAccordingToParametersIfPossible();
+		
+        mMap.setOnMapClickListener(mMapClickListener);
+        
+		//TODO: redraw rectangle and markers if needed
+        
 	}
+	
+	@Override
+    protected void onStart(){
+		super.onStart();
+	}  
+
+	@Override
+    protected void onRestart(){
+		super.onRestart();	
+	}
+
+	@Override
+    protected void onResume(){
+		super.onResume();
+	}
+
+	@Override
+    protected void onPause(){
+		super.onPause();
+	}
+
+	@Override
+    protected void onStop(){
+		//TODO: save current markers 
+		super.onStop();
+	}	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -125,9 +159,13 @@ public class GoogleMapActivity extends Activity {
 	        	setResult(RESULT_CANCELED);
 	        	finish();
 	            return true;
+	        
+	        // On saving changes
 	        case R.id.save_region:
 	        	if (mCorner0 != null && mCorner1 != null) {
 	        		mResult = new Intent();
+	        		mResult.putExtra(REGION_ID, getIntent().getIntExtra(REGION_ID, -1));
+	        		mResult.putExtra(REGION_NAME, getIntent().getStringExtra(REGION_NAME));
 	        		mResult.putExtra(LATITUDE0, mCorner0.getPosition().latitude);
 	        		mResult.putExtra(LONGITUDE0, mCorner0.getPosition().longitude);
 	        		mResult.putExtra(LATITUDE1, mCorner1.getPosition().latitude);
@@ -153,6 +191,50 @@ public class GoogleMapActivity extends Activity {
 	    setResult(RESULT_CANCELED);
 	    finish();
 	}
+	
+	
+	/***********************************************************
+	 * 
+	 * GoogleMapActivity: auxiliary functions
+	 * 
+	 ***********************************************************/	
+	
+	private void drawRegion(){
+		mRegion = mMap.addPolygon(new PolygonOptions()
+        .add(mCorner0.getPosition(),
+        	 new LatLng(mCorner0.getPosition().latitude, mCorner1.getPosition().longitude),
+        	 mCorner1.getPosition(),
+        	 new LatLng(mCorner1.getPosition().latitude, mCorner0.getPosition().longitude))
+        .strokeColor(Color.BLUE)
+        .strokeWidth(2)
+        .fillColor(Color.BLUE & 0x3FFFFFFF));
+	}
 
+	//
+	private void setMapAccordingToParametersIfPossible(){
+		Bundle extras = getIntent().getExtras();
+		if (extras.containsKey(LATITUDE0) &&
+			extras.containsKey(LATITUDE1) &&
+			extras.containsKey(LONGITUDE0)&&
+			extras.containsKey(LONGITUDE1))
+		{
+			mCorner0 = mMap.addMarker(new MarkerOptions()
+										.position(new LatLng(extras.getDouble(LATITUDE0), extras.getDouble(LONGITUDE0)))
+										.draggable(true));
+			mCorner1 = mMap.addMarker(new MarkerOptions()
+										.position(new LatLng(extras.getDouble(LATITUDE1), extras.getDouble(LONGITUDE1)))
+										.draggable(true));
+			drawRegion();
+				
+		    mMapCameraOnStart = new LatLng(extras.getDouble(LATITUDE0), extras.getDouble(LONGITUDE0));
+			mMap.setOnMarkerDragListener(mMarkerDragListener);
+		}
+		else
+				mMapCameraOnStart = new LatLng(-34.544327,-58.439425);
+
+		mMap.setMyLocationEnabled(false);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMapCameraOnStart, 13));
+
+	}
 
 }

@@ -11,10 +11,12 @@ public class ThemeSelector implements OnItemSelectedListener {
 //	
 
 	private Context mContext;
+	private DBAdapter mDB;
  
 	
-	ThemeSelector(Context ctx){
+	ThemeSelector(Context ctx, DBAdapter regionsthemesdb){
 		mContext = ctx;
+		mDB = regionsthemesdb;
 		
 	}
 

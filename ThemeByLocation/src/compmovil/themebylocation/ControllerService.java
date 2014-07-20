@@ -18,11 +18,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import compmovil.themebylocation.controllers.MainController;
+import compmovil.themebylocation.dbeditor.DBAdapter;
 import compmovil.themebylocation.models.Effector;
 import compmovil.themebylocation.models.MusicPlayerEffector;
 import compmovil.themebylocation.models.Notifier;
 import compmovil.themebylocation.models.RectangularRegion;
 import compmovil.themebylocation.models.RegionSensor;
+import compmovil.themebylocation.models.RegionsManager;
 import compmovil.themebylocation.models.ThemePerRegionManager;
 import compmovil.themebylocation.models.strategies.GPSLocationListenerSensingStrategy;
 
@@ -61,8 +63,10 @@ public class ControllerService extends Service {
 	private Messenger mMessengerClient;
 	
 	private ThemePerRegionManager mThemePerRegionManager;
+	private RegionsManager mRegionsManager;
 	private Effector mMusicTracksPlayer;
 	private RegionSensor mRegionSensor;
+	private DBAdapter mRegionsThemesDB;
 	
 	
 	
@@ -75,6 +79,7 @@ public class ControllerService extends Service {
 	
 	class ControllerServiceHandler extends Handler {
 		
+
 		public ControllerServiceHandler(Looper looper){
 			super(looper);
 		}
@@ -88,19 +93,26 @@ public class ControllerService extends Service {
 					//Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
 					mMessengerClient = msg.replyTo;
 					
-					mThemePerRegionManager = new ThemePerRegionManager();
-					try {
-						//TODO: load them from a database
-						mThemePerRegionManager.newAssociation(105, "android.resource://compmovil.themebylocation/raw/region105");
-						mThemePerRegionManager.newAssociation(112, "android.resource://compmovil.themebylocation/raw/region112");
-						mThemePerRegionManager.newAssociation(120, "android.resource://compmovil.themebylocation/raw/region120");
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+					//DATABASE
+					mRegionsThemesDB = new DBAdapter(getApplicationContext());
+					mRegionsThemesDB.open(DBAdapter.READONLY);
+					
+					mThemePerRegionManager = new ThemePerRegionManager(mRegionsThemesDB);
+					mRegionsManager = new RegionsManager(mRegionsThemesDB);
+					
+//					try {
+//						//TODO: load them from a database
+//						mThemePerRegionManager.newAssociation(105, "android.resource://compmovil.themebylocation/raw/region105");
+//						mThemePerRegionManager.newAssociation(112, "android.resource://compmovil.themebylocation/raw/region112");
+//						mThemePerRegionManager.newAssociation(120, "android.resource://compmovil.themebylocation/raw/region120");
+//					} catch (Exception e1) {
+//						e1.printStackTrace();
+//					}
 					
 					if (mRegionSensor == null) {
 						mRegionSensor = new RegionSensor(new GPSLocationListenerSensingStrategy(getApplicationContext(),
-																								new Notifier(mMessengerMe)));
+																								new Notifier(mMessengerMe),
+																								mRegionsManager));
 						try {
 							mRegionSensor.initialize();
 						} catch (Exception e) {
@@ -188,8 +200,6 @@ public class ControllerService extends Service {
 		
 	    // This service's messenger
 		mMessengerMe = new Messenger(mServiceHandler);
-		
-		mThemePerRegionManager = new ThemePerRegionManager();
 
 	}
 	
@@ -240,6 +250,8 @@ public class ControllerService extends Service {
 		if (mRegionSensor != null) {
 			mRegionSensor.stopSensing();
 		}
+		if (mRegionsThemesDB != null)
+			mRegionsThemesDB.close();
 		mServiceHandler.getLooper().quit();
 			
 	}

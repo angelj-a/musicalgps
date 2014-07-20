@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/edit_region_name"
+          android:title="@string/edit_region_name"/>
+    <item android:id="@+id/edit_region_coordinates"
+          android:title="@string/edit_region_coordinates"/>
+    <item android:id="@+id/choose_another_theme"
+          android:title="@string/choose_another_theme"/>
+    <item android:id="@+id/delete_region"
+          android:title="@string/delete_region"/>
+
+</menu>

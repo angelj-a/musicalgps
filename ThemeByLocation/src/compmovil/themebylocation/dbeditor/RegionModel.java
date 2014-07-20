@@ -20,7 +20,7 @@ public class RegionModel {
         return newLocation;
     }
 	
-	public RegionModel(String name, float lat0, float long0, float lat1, float long1, Integer themeid){
+	public RegionModel(String name, double lat0, double long0, double lat1, double long1, Integer themeid){
 		mName = name;
 		try {
 			mRectReg = new RectangularRegion(createLocation(lat0, long0, 0),
