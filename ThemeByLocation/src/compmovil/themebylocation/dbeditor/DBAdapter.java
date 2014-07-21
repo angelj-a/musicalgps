@@ -80,8 +80,13 @@ public class DBAdapter {
 	   values.put(RegionsDbHelper.KEY_REGION_THEMEID, themeid);
 	   mDB.update(RegionsDbHelper.TABLE_REGIONS, values, RegionsDbHelper.KEY_REGION_ID + "=" + regionid,null);
    }
-	
    
+   
+   //
+   // OBS: repeated code. TODO: redesign/refactor
+   //
+   
+	   
    public List<RegionModel> getAllRegions(){
 	   List<RegionModel> listRegMod = new ArrayList<RegionModel>();
    		Cursor  cursor = mDB.query(true,RegionsDbHelper.TABLE_REGIONS, RegionsDbHelper.ALL_KEYS_REGION,null,null,null,null,null,null);
@@ -125,9 +130,25 @@ public class DBAdapter {
        }
 	   	return themes;
    }
+   
+   
+   @SuppressLint("UseSparseArrays")
+   public Map<Integer,String> getThemesNamesPerRegion(){
+	    Map<Integer,String> themesperreg = new HashMap<Integer,String>();
+	    final String QUERY_URI_PER_REGION = "SELECT " + RegionsDbHelper.KEY_REGION_ID + "," + RegionsDbHelper.KEY_THEME_NAME + " FROM " + RegionsDbHelper.TABLE_REGIONS + " r INNER JOIN " + 
+	    											RegionsDbHelper.TABLE_THEMES + " t "
+	    											+ "ON r." + RegionsDbHelper.KEY_REGION_THEMEID +"= t." + RegionsDbHelper.KEY_THEMES_ID + ";";
+	   	//Cursor  cursor = mDB.query(true,RegionsDbHelper.TABLE_REGIONS, new String[]{RegionsDbHelper.KEY_REGION_ID, RegionsDbHelper.KEY_REGION_THEMEID},null,null,null,null,null,null);
+	    Cursor cursor = mDB.rawQuery(QUERY_URI_PER_REGION, null);
+    	if (cursor.moveToFirst()) {
+   		 do {          
+   			themesperreg.put(cursor.getInt(0),cursor.getString(1));
+   	     } while (cursor.moveToNext());
+       }	    
+	    return themesperreg;
+   }
 
-   
-   
+      
    @SuppressLint("UseSparseArrays")
    public Map<Integer,String> getThemesPerRegion(){
 	    Map<Integer,String> themesperreg = new HashMap<Integer,String>();

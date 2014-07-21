@@ -1,6 +1,7 @@
 package compmovil.themebylocation.dbeditor;
 
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -113,7 +114,15 @@ public class EditorActivity extends Activity {
 	        	refreshTable();
 	        	return true;
 	        case R.id.test_googlemap_activity:
-	        	//mRegionsThemesDB.updateRegionTheme(1, 1);
+//	        	mRegionsThemesDB.updateRegionTheme(3, 2);
+//	    		Intent params = new Intent(this, GoogleMapActivity.class);
+//	    		params.putExtra(GoogleMapActivity.REGION_ID, -1);
+//	    		params.putExtra(GoogleMapActivity.REGION_NAME, "region 3");
+//	    		params.putExtra(GoogleMapActivity.LATITUDE0, 25);
+//	    		params.putExtra(GoogleMapActivity.LONGITUDE0, -50);
+//	    		params.putExtra(GoogleMapActivity.LATITUDE1, 26);
+//	    		params.putExtra(GoogleMapActivity.LONGITUDE1, -51);
+//	        	mRegionEditor.persistRegion(params);
 	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
@@ -167,7 +176,8 @@ public class EditorActivity extends Activity {
 	private void showTable() {		
 		//TODO: MVC
 		List<RegionModel> listOfRegions = mRegionsThemesDB.getAllRegions();
-		List<String> listOfThemesNames = mRegionsThemesDB.getAllThemesNames();
+		//List<String> listOfThemesNames = mRegionsThemesDB.getAllThemesNames();
+		Map<Integer,String> themesNamesPerRegionId = mRegionsThemesDB.getThemesNamesPerRegion();
 		
 		if (mTable == null)
 			mTable = (TableLayout) findViewById(R.id.tableRegions);
@@ -197,8 +207,8 @@ public class EditorActivity extends Activity {
 	        idRow.setTextColor(Color.parseColor("#FFFFFF"));
 	        regionName.setText(listOfRegions.get(i).getName());
 	        regionName.setPaddingRelative(2, 10, 2, 10);
-	        themeName.setText(listOfThemesNames
-	        					.get(listOfRegions.get(i).getThemeId()));
+	        themeName.setText(themesNamesPerRegionId
+	        					.get(listOfRegions.get(i).getId()));
 	        themeName.setPaddingRelative(2, 10, 20, 10);
 	        
 	        if (i%2 == 0){
