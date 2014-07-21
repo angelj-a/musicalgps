@@ -25,7 +25,7 @@ import compmovil.themebylocation.map.GoogleMapActivity;
 public class EditorActivity extends Activity {
 	
 	private RegionEditor mRegionEditor;
-	private ThemeSelector mThemeEditor; //TODO
+	private ThemeSelector mThemeSelector; //TODO
 	
 	private DBAdapter mRegionsThemesDB;
 	
@@ -34,6 +34,11 @@ public class EditorActivity extends Activity {
 //	private ArrayAdapter<String> mAdapter;
 	
 	TableLayout mTable;
+	List<RegionModel> listOfRegions;
+	//List<String> listOfThemesNames = mRegionsThemesDB.getAllThemesNames();
+	Map<Integer,String> themesNamesPerRegionId;
+	int m_SelectedTableItemId_workaround;
+	
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,14 +47,7 @@ public class EditorActivity extends Activity {
                 
 		initializeRegionsAdmin();
 		showTable();
-        
-//		mThemesManager = new ThemesManager();
-//		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mThemesManager.getThemesNames());
-//		mDropdown = (Spinner) findViewById(R.id.spinner1);
-//		mDropdown.setAdapter(mAdapter);        
-        
-        
-        
+  
         if (savedInstanceState != null) {
         }
         
@@ -149,23 +147,26 @@ public class EditorActivity extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.regions_editor_ctx_menu, menu);
+        m_SelectedTableItemId_workaround = v.getId();
     }
-    
+        
     @Override
     public boolean onContextItemSelected(MenuItem item) { 
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        int regionIdMock = 1;
+        int regionId = listOfRegions.get(m_SelectedTableItemId_workaround).getId();
+        int themeId = listOfRegions.get(m_SelectedTableItemId_workaround).getThemeId(); 
         switch(item.getItemId()){
             case R.id.edit_region_name:
-            	mRegionEditor.editRegionName(regionIdMock);
+            	mRegionEditor.editRegionName(regionId);
                 break;
             case R.id.edit_region_coordinates:
-            	mRegionEditor.editRegionCoordinates(regionIdMock);
+            	mRegionEditor.editRegionCoordinates(regionId);
                 break;
             case R.id.choose_another_theme:
+            	//mRegionEditor.chooseAnotherTheme(regionId, themeId);
             	Toast.makeText(this, "IMPLEMENTAR selección de tema: ", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.delete_region:
+            	//mRegionEditor.deleteRegion(regionId);
             	Toast.makeText(this, "IMPLEMENTAR borrado", Toast.LENGTH_SHORT).show();
                 break;                
         }
@@ -174,10 +175,10 @@ public class EditorActivity extends Activity {
 
 
 	private void showTable() {		
-		//TODO: MVC
-		List<RegionModel> listOfRegions = mRegionsThemesDB.getAllRegions();
+		//TODO: MVC & replace with a ListView
+		listOfRegions = mRegionsThemesDB.getAllRegions();
 		//List<String> listOfThemesNames = mRegionsThemesDB.getAllThemesNames();
-		Map<Integer,String> themesNamesPerRegionId = mRegionsThemesDB.getThemesNamesPerRegion();
+		themesNamesPerRegionId = mRegionsThemesDB.getThemesNamesPerRegion();
 		
 		if (mTable == null)
 			mTable = (TableLayout) findViewById(R.id.tableRegions);
@@ -193,8 +194,7 @@ public class EditorActivity extends Activity {
 	        TextView themeName = new TextView(this);
 	        
 	        //To identify its position
-	        regionName.setId(i);
-	        themeName.setId(i);
+	        row.setId(i);
 	        
 	        
 	        //Appearance
