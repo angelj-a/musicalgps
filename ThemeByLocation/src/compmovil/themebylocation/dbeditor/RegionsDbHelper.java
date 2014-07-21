@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class RegionsDbHelper extends SQLiteOpenHelper {
 	
 	private static int version = 1;
-	private final static String sDATABASE_NAME = "RegionsDb" ;
+	private final static String sDATABASE_NAME = "RegionsDb.db" ;
 	private static CursorFactory factory = null;
 	
 	public static final String TABLE_THEMES = "Themes";

@@ -113,8 +113,7 @@ public class EditorActivity extends Activity {
 	        	refreshTable();
 	        	return true;
 	        case R.id.test_googlemap_activity:
-//	        	Intent params = new Intent(this, GoogleMapActivity.class);
-//	        	launchMapActivity(params);
+	        	//mRegionsThemesDB.updateRegionTheme(1, 1);
 	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
@@ -163,12 +162,6 @@ public class EditorActivity extends Activity {
         }
         return true;
     }
-
-	
-
-//	private void launchMapActivity(Intent params) {
-//		startActivityForResult(params, GoogleMapActivity.REGION_BOUNDS);		
-//	}
 
 
 	private void showTable() {		
@@ -228,6 +221,8 @@ public class EditorActivity extends Activity {
 	        row.addView(themeName);
 	        
 	        registerForContextMenu(row);
+	        
+	        
 	       
 	        mTable.addView(row,i);
 	    }

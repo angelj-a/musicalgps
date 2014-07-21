@@ -47,7 +47,7 @@ public class DBAdapter {
 	 values.put(RegionsDbHelper.KEY_REGION_LAT_N, lat1);
 	 values.put(RegionsDbHelper.KEY_REGION_LONG_W, long0);
 	 values.put(RegionsDbHelper.KEY_REGION_LONG_E, long1);
-	 values.put(RegionsDbHelper.KEY_REGION_THEMEID, 0);
+	 values.put(RegionsDbHelper.KEY_REGION_THEMEID, 1);
 		 
 	 mDB.insert(RegionsDbHelper.TABLE_REGIONS, null, values);	 
    };
@@ -61,7 +61,7 @@ public class DBAdapter {
 		 values.put(RegionsDbHelper.KEY_REGION_LAT_N, lat1);
 		 values.put(RegionsDbHelper.KEY_REGION_LONG_W, long0);
 		 values.put(RegionsDbHelper.KEY_REGION_LONG_E, long1);
-		 values.put(RegionsDbHelper.KEY_REGION_THEMEID, 0);
+		 values.put(RegionsDbHelper.KEY_REGION_THEMEID, 1);
 			 
 		 mDB.update(RegionsDbHelper.TABLE_REGIONS, values, RegionsDbHelper.KEY_REGION_ID + "=" + id,null);	 
    };
@@ -87,7 +87,7 @@ public class DBAdapter {
    		Cursor  cursor = mDB.query(true,RegionsDbHelper.TABLE_REGIONS, RegionsDbHelper.ALL_KEYS_REGION,null,null,null,null,null,null);
     	if (cursor.moveToFirst()) {
       		 do {          
-      			 listRegMod.add(new RegionModel(cursor.getString(1), cursor.getDouble(2),cursor.getDouble(3),cursor.getDouble(4), cursor.getDouble(5), cursor.getInt(6)));
+      			 listRegMod.add(new RegionModel(cursor.getInt(0), cursor.getString(1), cursor.getDouble(2),cursor.getDouble(3),cursor.getDouble(4), cursor.getDouble(5), cursor.getInt(6)));
       	        } while (cursor.moveToNext());
           }
    	return listRegMod;
@@ -132,7 +132,8 @@ public class DBAdapter {
    public Map<Integer,String> getThemesPerRegion(){
 	    Map<Integer,String> themesperreg = new HashMap<Integer,String>();
 	    final String QUERY_URI_PER_REGION = "SELECT " + RegionsDbHelper.KEY_REGION_ID + "," + RegionsDbHelper.KEY_THEME_URI + " FROM " + RegionsDbHelper.TABLE_REGIONS + " r INNER JOIN " + 
-	    											RegionsDbHelper.TABLE_THEMES + "t ON t." + RegionsDbHelper.KEY_REGION_THEMEID +"= b." + RegionsDbHelper.KEY_THEMES_ID + ";";
+	    											RegionsDbHelper.TABLE_THEMES + " t "
+	    											+ "ON r." + RegionsDbHelper.KEY_REGION_THEMEID +"= t." + RegionsDbHelper.KEY_THEMES_ID + ";";
 	   	//Cursor  cursor = mDB.query(true,RegionsDbHelper.TABLE_REGIONS, new String[]{RegionsDbHelper.KEY_REGION_ID, RegionsDbHelper.KEY_REGION_THEMEID},null,null,null,null,null,null);
 	    Cursor cursor = mDB.rawQuery(QUERY_URI_PER_REGION, null);
     	if (cursor.moveToFirst()) {

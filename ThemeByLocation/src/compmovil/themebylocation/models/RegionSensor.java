@@ -45,7 +45,7 @@ public class RegionSensor {
 		mIsStopped = true;
 	}
 	
-	// returns true if the strategy was set successfully
+	// returns true if the strategy was successfully set 
 	public boolean setSensingStrategy(SensingStrategy strategy) {
 		if (mIsStopped) {
 			if (strategy == null)

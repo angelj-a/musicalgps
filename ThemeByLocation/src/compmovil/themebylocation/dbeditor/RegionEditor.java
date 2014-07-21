@@ -10,13 +10,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 
 import compmovil.themebylocation.R;
 import compmovil.themebylocation.map.GoogleMapActivity;
 
-public class RegionEditor implements OnClickListener {
+public class RegionEditor {
 	
 	private Context mActivity;
 	private DBAdapter mRegionsDB;
@@ -25,10 +24,6 @@ public class RegionEditor implements OnClickListener {
 		mActivity = ctx;
 		mRegionsDB = db;
 	}
-
-	@Override
-	public void onClick(View v) {
-    };
     
     public void editRegionName(int id){
 		regionEditDialog(id);

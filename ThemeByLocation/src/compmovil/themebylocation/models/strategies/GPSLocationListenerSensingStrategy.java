@@ -80,7 +80,8 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
 		if (!(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)))
 			throw new Exception("No hay disponible GPS");
 		
-		mHandlerThread = new HandlerThread("GPS Thread");		
+		mHandlerThread = new HandlerThread("GPS Thread");
+		mRegionsManager.initialize();
 		
 	}
 

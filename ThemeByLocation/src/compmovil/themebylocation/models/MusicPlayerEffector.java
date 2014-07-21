@@ -31,7 +31,6 @@ public class MusicPlayerEffector implements Effector {
 		Log.i("THEMELOCATION","inicializando MusicPlayerEffector");
 		mPlayerState = mPlayerState.initialize();
 		Log.i("THEMELOCATION","inicializado MusicPlayerEffector (OK)");
-		mThemePerRegionManager.initialize();
 	}
 
 	@Override

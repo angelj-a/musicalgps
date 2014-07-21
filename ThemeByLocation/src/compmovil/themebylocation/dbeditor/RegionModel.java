@@ -10,6 +10,7 @@ public class RegionModel {
 	private RectangularRegion mRectReg;
 	private String mName;
 	private Integer mThemeId;
+	private Integer mId;
 	
     private Location createLocation(double lat, double lng, float accuracy) {
         // Create a new Location
@@ -20,10 +21,11 @@ public class RegionModel {
         return newLocation;
     }
 	
-	public RegionModel(String name, double lat0, double long0, double lat1, double long1, Integer themeid){
+	public RegionModel(Integer id, String name, double lat0, double long0, double lat1, double long1, Integer themeid){
+		mId = id;
 		mName = name;
 		try {
-			mRectReg = new RectangularRegion(createLocation(lat0, long0, 0),
+			mRectReg = new RectangularRegion(mId, createLocation(lat0, long0, 0),
 											 createLocation(lat1, long1, 0));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -37,6 +39,10 @@ public class RegionModel {
 	
 	public Integer getThemeId(){
 		return mThemeId;
+	}
+	
+	public Integer getId(){
+		return mId;
 	}
 	
 	public RectangularRegion toRectangularRegion(){

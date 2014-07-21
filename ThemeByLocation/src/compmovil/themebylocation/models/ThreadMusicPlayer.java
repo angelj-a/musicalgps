@@ -77,6 +77,7 @@ public class ThreadMusicPlayer {
 			throw new Exception("Error de inicialización: no se pudo instanciar MediaPlayer");
 		
 		mPlayerThread = new HandlerThread("[MusicPlayerEffector] MusicPlayer thread");
+		mThemePerRegionManager.initialize();
 		mPlayerThread.start();
 		mPlayerHandler = new Handler(mPlayerThread.getLooper());
 	}

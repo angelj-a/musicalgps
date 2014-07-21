@@ -1,5 +1,8 @@
 package compmovil.themebylocation.models;
 
+//
+// UNUSED
+// 
 
 public class ThemesManager {
 	
