@@ -7,6 +7,7 @@ import android.location.Location;
 
 import compmovil.themebylocation.dbeditor.DBAdapter;
 import compmovil.themebylocation.dbeditor.RegionModel;
+import compmovil.themebylocation.utils.exceptions.NoRegionsException;
 
 public class RegionsManager {
 	    
@@ -18,11 +19,14 @@ public class RegionsManager {
 		mRegionsThemesDB = dbAdapter;
 	}
 	
-	public void initialize(){
+	public void initialize() throws Exception {
 		List<RegionModel> regmodels = mRegionsThemesDB.getAllRegions();
 		for (RegionModel rm : regmodels) {
 			mRegionsContainer.add(rm.toRectangularRegion()); 
 		}
+		
+		if (mRegionsContainer.isEmpty())
+			throw new NoRegionsException();
 	}
 	
 	public Region insideWhichRegion(Location location){

@@ -25,6 +25,7 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
     private Handler mHandler;
 	private Context mContext;
 	private Notifier mNotifier;
+	private boolean mIsStarted;
 	
 	private LocationListener mLocationListener = new LocationListener(){
     	@Override
@@ -82,6 +83,7 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
 		
 		mHandlerThread = new HandlerThread("GPS Thread");
 		mRegionsManager.initialize();
+		mIsStarted = false;
 		
 	}
 
@@ -89,14 +91,16 @@ public class GPSLocationListenerSensingStrategy implements SensingStrategy {
 	public void startSensing() {
 		mHandlerThread.start();
 	    mHandler = new Handler(mHandlerThread.getLooper());
-	    mHandler.post(mRunnableRequestLocUpdates );					
+	    mHandler.post(mRunnableRequestLocUpdates );
+	    mIsStarted = true;
 	}
 
 	@Override
 	public void stopSensing() {
 		mLocationManager.removeUpdates(mLocationListener);
-		if (mHandlerThread != null)
-			mHandlerThread.getLooper().quit();		
+		if (mHandlerThread != null && mIsStarted)
+			mHandlerThread.getLooper().quit();
+		mIsStarted = false;
 	}
 
 	

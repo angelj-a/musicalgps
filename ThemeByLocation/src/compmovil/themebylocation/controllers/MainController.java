@@ -39,6 +39,7 @@ public class MainController implements OnClickListener {
 	public final static int ERROR = 2;
 	public final static int ERROR_LOCATION_PROVIDER_NOT_DETECTED = 0;
 	public final static int ERROR_FAILED_INITIALIZING_MUSIC_PLAYER = 1;
+	public static final int ERROR_NO_REGIONS_FOUND = 2;
 	
 
 	//Context
@@ -243,6 +244,10 @@ public class MainController implements OnClickListener {
 			case ERROR_LOCATION_PROVIDER_NOT_DETECTED:
             	mInfo = "Servicio de geolocalización no disponible";
                 mActivity.runOnUiThread(mRunnableUpdateInfo); 
+				break;
+			case ERROR_NO_REGIONS_FOUND:
+				mInfo = "No hay regiones definidas.\nAgregue una antes de continuar";
+				mActivity.runOnUiThread(mRunnableUpdateInfo);
 				break;
 			
 			default:

@@ -81,10 +81,14 @@ public class DBAdapter {
 	   mDB.update(RegionsDbHelper.TABLE_REGIONS, values, RegionsDbHelper.KEY_REGION_ID + "=" + regionid,null);
    }
    
+   public void deleteRegion(int regionid) {
+		mDB.delete(RegionsDbHelper.TABLE_REGIONS, RegionsDbHelper.KEY_REGION_ID + "=" + regionid,null);
+	}
    
-   //
+   
+   //-------------------------------------------------------------
    // OBS: repeated code. TODO: redesign/refactor
-   //
+   //-------------------------------------------------------------
    
 	   
    public List<RegionModel> getAllRegions(){
@@ -121,6 +125,17 @@ public class DBAdapter {
    	        } while (cursor.moveToNext());
        }
 	   	return themes;
+   }
+   
+   public List<Integer> getAllThemesIds(){
+	   List<Integer> themes = new ArrayList<Integer>();
+	   	Cursor  cursor = mDB.query(true,RegionsDbHelper.TABLE_THEMES, new String[]{RegionsDbHelper.KEY_THEMES_ID},null,null,null,null,null,null);
+   	if (cursor.moveToFirst()) {
+  		 do {          
+  			 themes.add(cursor.getInt(0));
+  	        } while (cursor.moveToNext());
+      }
+	   	return themes;	   
    }
    
    public List<String> getAllThemesNames(){
@@ -176,5 +191,7 @@ public class DBAdapter {
 
    	return cursor;
    }
+
+
 
 }

@@ -13,11 +13,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import compmovil.themebylocation.R;
 import compmovil.themebylocation.map.GoogleMapActivity;
@@ -25,17 +23,12 @@ import compmovil.themebylocation.map.GoogleMapActivity;
 public class EditorActivity extends Activity {
 	
 	private RegionEditor mRegionEditor;
-	private ThemeSelector mThemeSelector; //TODO
+	//private ThemeSelector mThemeSelector; //TODO
 	
 	private DBAdapter mRegionsThemesDB;
 	
-//	private ThemesManager mThemesManager;
-//	private Spinner mDropdown;
-//	private ArrayAdapter<String> mAdapter;
-	
 	TableLayout mTable;
 	List<RegionModel> listOfRegions;
-	//List<String> listOfThemesNames = mRegionsThemesDB.getAllThemesNames();
 	Map<Integer,String> themesNamesPerRegionId;
 	int m_SelectedTableItemId_workaround;
 	
@@ -88,7 +81,6 @@ public class EditorActivity extends Activity {
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		//savedInstanceState.putBoolean("mIsControllerBound", maincontroller.isBound());
 	}
 	
 	
@@ -109,18 +101,15 @@ public class EditorActivity extends Activity {
 	        	mRegionEditor.addRegion();
 	            return true;
 	        case R.id.refresh_table:
+//	    		Intent params = new Intent(this, GoogleMapActivity.class);
+//	    		params.putExtra(GoogleMapActivity.REGION_ID, -1);
+//	    		params.putExtra(GoogleMapActivity.REGION_NAME, "region 1");
+//	    		params.putExtra(GoogleMapActivity.LATITUDE0, 25.0);
+//	    		params.putExtra(GoogleMapActivity.LONGITUDE0, -50.0);
+//	    		params.putExtra(GoogleMapActivity.LATITUDE1, 26.0);
+//	    		params.putExtra(GoogleMapActivity.LONGITUDE1, -51.0);
+//	    		mRegionEditor.persistRegion(params);
 	        	refreshTable();
-	        	return true;
-	        case R.id.test_googlemap_activity:
-	    		Intent params = new Intent(this, GoogleMapActivity.class);
-	    		params.putExtra(GoogleMapActivity.REGION_ID, -1);
-	    		params.putExtra(GoogleMapActivity.REGION_NAME, "region 1");
-	    		params.putExtra(GoogleMapActivity.LATITUDE0, 25.0);
-	    		params.putExtra(GoogleMapActivity.LONGITUDE0, -50.0);
-	    		params.putExtra(GoogleMapActivity.LATITUDE1, 26.0);
-	    		params.putExtra(GoogleMapActivity.LONGITUDE1, -51.0);
-	    		mRegionEditor.persistRegion(params);
-	    		mRegionsThemesDB.updateRegionTheme(1, 2);
 	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
@@ -129,7 +118,7 @@ public class EditorActivity extends Activity {
 	
 	
 	//
-	// Gets coordinates from GoogleMapActivity and piggybacked id and region name 
+	// Gets coordinates from GoogleMapActivity with piggybacked id and region name 
 	//
 	@Override
 	protected void onActivityResult(int reqCode, int resCode, Intent data){
@@ -153,7 +142,6 @@ public class EditorActivity extends Activity {
     @Override
     public boolean onContextItemSelected(MenuItem item) { 
         int regionId = listOfRegions.get(m_SelectedTableItemId_workaround).getId();
-        int themeId = listOfRegions.get(m_SelectedTableItemId_workaround).getThemeId(); 
         switch(item.getItemId()){
             case R.id.edit_region_name:
             	mRegionEditor.editRegionName(regionId);
@@ -161,12 +149,9 @@ public class EditorActivity extends Activity {
             case R.id.edit_region_coordinates:
             	mRegionEditor.editRegionCoordinates(regionId);
                 break;
-            case R.id.choose_another_theme:
-            	mRegionEditor.chooseAnotherTheme(regionId, themeId);
-                break;
             case R.id.delete_region:
-            	//mRegionEditor.deleteRegion(regionId);
-            	Toast.makeText(this, "IMPLEMENTAR borrado", Toast.LENGTH_SHORT).show();
+            	mRegionEditor.deleteRegion(regionId);
+            	refreshTable();
                 break;                
         }
         return true;
@@ -194,6 +179,7 @@ public class EditorActivity extends Activity {
 	        
 	        //To identify its position
 	        row.setId(i);
+	        themeName.setId(listOfRegions.get(i).getId());
 	        
 	        
 	        //Appearance
@@ -223,7 +209,7 @@ public class EditorActivity extends Activity {
 	        
 	        
 	        //regionName.setOnClickListener(mRegionEditor);
-	        //themeName.setOnClickListener(mThemeSelector);
+	        themeName.setOnClickListener(mRegionEditor);
 	        
 	        row.addView(idRow);
 	        row.addView(regionName);
@@ -250,7 +236,6 @@ public class EditorActivity extends Activity {
         
         
         mRegionEditor = new RegionEditor(this, mRegionsThemesDB);
-//        mThemeSelector = new ThemeSelector(this, mRegionsThemesDB);	
 	}
 	
 }

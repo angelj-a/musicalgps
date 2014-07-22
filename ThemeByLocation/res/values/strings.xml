@@ -18,5 +18,7 @@
     <string name="delete_region">Borrar región</string>
     <string name="region_name_txtview">Nombre de la región</string>
     <string name="region_name_hint">Nombre descriptivo para la región</string>
+    <string name="help_tip">Dibuje un rectángulo sobre el mapa marcando dos esquinas opuestas.</string>
+    <string name="help_tip_title">Info</string>
 
 </resources>

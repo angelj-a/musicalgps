@@ -11,7 +11,7 @@ public class RegionSensor {
 	 ************************************************************/	
 
 	private SensingStrategy mSensingStrategy;
-	private boolean mIsStopped;
+	private boolean mIsStarted;
     
     
 	
@@ -26,7 +26,7 @@ public class RegionSensor {
 			throw new NullPointerException("El parámetro no puede ser null");
 		
 		mSensingStrategy = strategy;
-		mIsStopped = true;
+		mIsStarted = false;
 	}
 	
 	
@@ -36,18 +36,19 @@ public class RegionSensor {
 	
 	public void startSensing() {
 		mSensingStrategy.startSensing();
-		mIsStopped = false;
+		mIsStarted = true;
 	}
 	
 	
 	public void stopSensing() {
-		mSensingStrategy.stopSensing();
-		mIsStopped = true;
+		if (mIsStarted)
+			mSensingStrategy.stopSensing();
+		mIsStarted = false;
 	}
 	
 	// returns true if the strategy was successfully set 
 	public boolean setSensingStrategy(SensingStrategy strategy) {
-		if (mIsStopped) {
+		if (mIsStarted) {
 			if (strategy == null)
 				throw new NullPointerException("El parámetro no puede ser null");
 			mSensingStrategy = strategy;

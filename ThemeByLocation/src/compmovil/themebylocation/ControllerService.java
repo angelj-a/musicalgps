@@ -27,6 +27,7 @@ import compmovil.themebylocation.models.RegionSensor;
 import compmovil.themebylocation.models.RegionsManager;
 import compmovil.themebylocation.models.ThemePerRegionManager;
 import compmovil.themebylocation.models.strategies.GPSLocationListenerSensingStrategy;
+import compmovil.themebylocation.utils.exceptions.NoRegionsException;
 
 
 public class ControllerService extends Service {
@@ -90,38 +91,33 @@ public class ControllerService extends Service {
 			switch (msg.what) {
 			
 				case REGISTER_CLIENT_HANDLER:
-					//Toast.makeText(getApplicationContext(), "Recibido el handler del cliente", Toast.LENGTH_SHORT).show();
 					mMessengerClient = msg.replyTo;
 					
 					//DATABASE
 					mRegionsThemesDB = new DBAdapter(getApplicationContext());
 					mRegionsThemesDB.open(DBAdapter.READONLY);
-					
+										
 					mThemePerRegionManager = new ThemePerRegionManager(mRegionsThemesDB);
 					mRegionsManager = new RegionsManager(mRegionsThemesDB);
-					
-//					try {
-//						//TODO: load them from a database
-//						mThemePerRegionManager.newAssociation(105, "android.resource://compmovil.themebylocation/raw/region105");
-//						mThemePerRegionManager.newAssociation(112, "android.resource://compmovil.themebylocation/raw/region112");
-//						mThemePerRegionManager.newAssociation(120, "android.resource://compmovil.themebylocation/raw/region120");
-//					} catch (Exception e1) {
-//						e1.printStackTrace();
-//					}
-					
+										
 					if (mRegionSensor == null) {
 						mRegionSensor = new RegionSensor(new GPSLocationListenerSensingStrategy(getApplicationContext(),
 																								new Notifier(mMessengerMe),
 																								mRegionsManager));
 						try {
 							mRegionSensor.initialize();
-						} catch (Exception e) {
+						} catch (NoRegionsException e) {
+						   notifyError(MainController.ERROR_NO_REGIONS_FOUND);
+						   stopAll();
+						}
+						  catch (Exception e) {
 							notifyError(MainController.ERROR_LOCATION_PROVIDER_NOT_DETECTED);
 							e.printStackTrace();
 							stopAll();
 							return;
 						}
 						mRegionSensor.startSensing();
+						
 					}					
 					if (mMusicTracksPlayer == null) {
 						mMusicTracksPlayer = new MusicPlayerEffector(getApplicationContext(), mThemePerRegionManager); 
@@ -208,8 +204,6 @@ public class ControllerService extends Service {
 		if (mClientsCounter == 0)
 		{
 			mClientsCounter++;
-			//TODO: remove
-			Toast.makeText(getApplicationContext(), "Bindeado", Toast.LENGTH_SHORT).show();
 			return mMessengerMe.getBinder();
 		}
 		else
@@ -290,7 +284,7 @@ public class ControllerService extends Service {
         msg_resp.arg1 = errorcode;
         try {
 			mMessengerClient.send(msg_resp);
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			//cannot recover from error: force stop
 			stopAll();
 			e.printStackTrace();

@@ -113,7 +113,6 @@ public class GoogleMapActivity extends Activity {
 		setMapAccordingToParametersIfPossible();
 		
         mMap.setOnMapClickListener(mMapClickListener);
-        
 		//TODO: redraw rectangle and markers if needed
         
 	}
@@ -140,7 +139,7 @@ public class GoogleMapActivity extends Activity {
 
 	@Override
     protected void onStop(){
-		//TODO: save current markers 
+		//TODO: save current markers just in case the user rotates the device's screen
 		super.onStop();
 	}	
 	
@@ -155,6 +154,9 @@ public class GoogleMapActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
 	    switch (item.getItemId()) {
+	    	case R.id.help_tip:
+	    		Toast.makeText(this, R.string.help_tip, Toast.LENGTH_LONG).show();
+	    		return true;
 	        case R.id.discard_region:
 	        	setResult(RESULT_CANCELED);
 	        	finish();

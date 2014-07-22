@@ -1,5 +1,7 @@
 package compmovil.themebylocation.dbeditor;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -19,10 +22,10 @@ import android.widget.ListPopupWindow;
 import compmovil.themebylocation.R;
 import compmovil.themebylocation.map.GoogleMapActivity;
 
-public class RegionEditor {
+public class RegionEditor implements OnClickListener {
 	
-	private Context mActivity;
-	private DBAdapter mRegionsDB;
+	private final Context mActivity;
+	private final DBAdapter mRegionsDB;
 	
 	RegionEditor(Context ctx, DBAdapter db){
 		mActivity = ctx;
@@ -133,19 +136,6 @@ public class RegionEditor {
 	}
 	
 	
-	public void chooseAnotherTheme(int regionid, int currentthemeid){
-	    ListPopupWindow listThemesPopupWindow = new ListPopupWindow(mActivity);
-	    listThemesPopupWindow.setAdapter(new ArrayAdapter(mActivity, R.layout.list_item_theme, mRegionsDB.getAllThemesNames()));
-	    listThemesPopupWindow.setModal(true);
-	    OnItemClickListener itemClickListener = new OnItemClickListener() {
-	        public void onItemClick(AdapterView<?> parent, View view,
-		            int position, long id) {
-	        	
-		        }	    	
-			};
-	    listThemesPopupWindow.setOnItemClickListener(itemClickListener);
-	    listThemesPopupWindow.show();   
-	}
 	
 	private void changeTheme(int regionid, int newthemeid){
    	 	mRegionsDB.updateRegionTheme(regionid,newthemeid);
@@ -153,6 +143,32 @@ public class RegionEditor {
 	
 	private void launchMapActivity(Intent params) {
 		((Activity)mActivity).startActivityForResult(params, GoogleMapActivity.REGION_BOUNDS);		
+	}
+
+	@Override
+	public void onClick(View v) {
+		//TODO: refactor/redesign
+    	final int regionId = v.getId();
+    	final List<Integer> listsRegionsId = mRegionsDB.getAllThemesIds();
+	    final ListPopupWindow listThemesPopupWindow = new ListPopupWindow(mActivity);
+	    listThemesPopupWindow.setAdapter(new ArrayAdapter<String>(mActivity, R.layout.list_item_theme, mRegionsDB.getAllThemesNames()));
+	    listThemesPopupWindow.setModal(true);
+        listThemesPopupWindow.setAnchorView(v);
+	    OnItemClickListener itemClickListener = new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View view,
+		            int position, long id) {
+	        	changeTheme(regionId, listsRegionsId.get(position));
+	        	listThemesPopupWindow.dismiss();
+	        	((EditorActivity)mActivity).refreshTable();
+		        }	    	
+			};
+	    listThemesPopupWindow.setOnItemClickListener(itemClickListener); 
+	    listThemesPopupWindow.show();		
+	}
+
+	public void deleteRegion(int regionId) {
+		mRegionsDB.deleteRegion(regionId);
+		
 	}
     
 }

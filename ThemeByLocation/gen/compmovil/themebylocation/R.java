@@ -208,39 +208,39 @@ containing a value of this type.
         public static final int ic_menu_add=0x7f020019;
         public static final int ic_menu_close_clear_cancel=0x7f02001a;
         public static final int ic_menu_edit=0x7f02001b;
-        public static final int ic_menu_mapmode=0x7f02001c;
-        public static final int ic_menu_refresh=0x7f02001d;
-        public static final int ic_menu_revert=0x7f02001e;
-        public static final int ic_menu_save=0x7f02001f;
-        public static final int ic_plusone_medium_off_client=0x7f020020;
-        public static final int ic_plusone_small_off_client=0x7f020021;
-        public static final int ic_plusone_standard_off_client=0x7f020022;
-        public static final int ic_plusone_tall_off_client=0x7f020023;
+        public static final int ic_menu_help=0x7f02001c;
+        public static final int ic_menu_mapmode=0x7f02001d;
+        public static final int ic_menu_refresh=0x7f02001e;
+        public static final int ic_menu_revert=0x7f02001f;
+        public static final int ic_menu_save=0x7f020020;
+        public static final int ic_plusone_medium_off_client=0x7f020021;
+        public static final int ic_plusone_small_off_client=0x7f020022;
+        public static final int ic_plusone_standard_off_client=0x7f020023;
+        public static final int ic_plusone_tall_off_client=0x7f020024;
     }
     public static final class id {
         public static final int add_region=0x7f060013;
-        public static final int choose_another_theme=0x7f060016;
-        public static final int delete_region=0x7f060017;
-        public static final int discard_region=0x7f06000e;
+        public static final int delete_region=0x7f060016;
+        public static final int discard_region=0x7f06000f;
         public static final int edit_region_coordinates=0x7f060015;
         public static final int edit_region_name=0x7f060014;
+        public static final int help_tip=0x7f06000e;
         public static final int hybrid=0x7f060004;
         public static final int info_text=0x7f060008;
-        public static final int manage_regions=0x7f060010;
+        public static final int manage_regions=0x7f060011;
         public static final int map=0x7f060009;
         public static final int none=0x7f060000;
         public static final int normal=0x7f060001;
-        public static final int refresh_table=0x7f060011;
+        public static final int refresh_table=0x7f060012;
         public static final int region_name_edit=0x7f06000b;
         public static final int region_name_txtview=0x7f06000a;
         public static final int satellite=0x7f060002;
-        public static final int save_region=0x7f06000f;
+        public static final int save_region=0x7f060010;
         public static final int spinner1=0x7f06000d;
         public static final int startbutton=0x7f060007;
         public static final int stopservicebutton=0x7f060006;
         public static final int tableRegions=0x7f06000c;
         public static final int terrain=0x7f060003;
-        public static final int test_googlemap_activity=0x7f060012;
         public static final int unbindbutton=0x7f060005;
     }
     public static final class integer {
@@ -368,6 +368,8 @@ containing a value of this type.
         public static final int discard_region=0x7f070025;
         public static final int edit_region_coordinates=0x7f070028;
         public static final int edit_region_name=0x7f070027;
+        public static final int help_tip=0x7f07002d;
+        public static final int help_tip_title=0x7f07002e;
         /**  Location client code resources (prefix with location_client) 
          */
         public static final int location_client_powered_by_google=0x7f07001a;
