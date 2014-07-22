@@ -43,10 +43,10 @@ public class DBAdapter {
    	 ContentValues values = new ContentValues();
        
      values.put(RegionsDbHelper.KEY_REGION_NAME, name);
-	 values.put(RegionsDbHelper.KEY_REGION_LAT_S, lat0);
-	 values.put(RegionsDbHelper.KEY_REGION_LAT_N, lat1);
-	 values.put(RegionsDbHelper.KEY_REGION_LONG_W, long0);
-	 values.put(RegionsDbHelper.KEY_REGION_LONG_E, long1);
+	 values.put(RegionsDbHelper.KEY_REGION_LAT_0, lat0);
+	 values.put(RegionsDbHelper.KEY_REGION_LAT_1, lat1);
+	 values.put(RegionsDbHelper.KEY_REGION_LONG_0, long0);
+	 values.put(RegionsDbHelper.KEY_REGION_LONG_1, long1);
 	 values.put(RegionsDbHelper.KEY_REGION_THEMEID, 1);
 		 
 	 mDB.insert(RegionsDbHelper.TABLE_REGIONS, null, values);	 
@@ -57,10 +57,10 @@ public class DBAdapter {
 	   	 ContentValues values = new ContentValues();
 	       
 	     values.put(RegionsDbHelper.KEY_REGION_NAME, name);
-		 values.put(RegionsDbHelper.KEY_REGION_LAT_S, lat0);
-		 values.put(RegionsDbHelper.KEY_REGION_LAT_N, lat1);
-		 values.put(RegionsDbHelper.KEY_REGION_LONG_W, long0);
-		 values.put(RegionsDbHelper.KEY_REGION_LONG_E, long1);
+		 values.put(RegionsDbHelper.KEY_REGION_LAT_0, lat0);
+		 values.put(RegionsDbHelper.KEY_REGION_LAT_1, lat1);
+		 values.put(RegionsDbHelper.KEY_REGION_LONG_0, long0);
+		 values.put(RegionsDbHelper.KEY_REGION_LONG_1, long1);
 		 values.put(RegionsDbHelper.KEY_REGION_THEMEID, 1);
 			 
 		 mDB.update(RegionsDbHelper.TABLE_REGIONS, values, RegionsDbHelper.KEY_REGION_ID + "=" + id,null);	 
@@ -92,7 +92,10 @@ public class DBAdapter {
    		Cursor  cursor = mDB.query(true,RegionsDbHelper.TABLE_REGIONS, RegionsDbHelper.ALL_KEYS_REGION,null,null,null,null,null,null);
     	if (cursor.moveToFirst()) {
       		 do {          
-      			 listRegMod.add(new RegionModel(cursor.getInt(0), cursor.getString(1), cursor.getDouble(2),cursor.getDouble(3),cursor.getDouble(4), cursor.getDouble(5), cursor.getInt(6)));
+      			 listRegMod.add(new RegionModel(cursor.getInt(0), cursor.getString(1),	cursor.getDouble(cursor.getColumnIndex(RegionsDbHelper.KEY_REGION_LAT_0)),
+      					 																cursor.getDouble(cursor.getColumnIndex(RegionsDbHelper.KEY_REGION_LONG_0)),
+      					 																cursor.getDouble(cursor.getColumnIndex(RegionsDbHelper.KEY_REGION_LAT_1)),
+      					 																cursor.getDouble(cursor.getColumnIndex(RegionsDbHelper.KEY_REGION_LONG_1)), cursor.getInt(6)));
       	        } while (cursor.moveToNext());
           }
    	return listRegMod;

@@ -20,14 +20,14 @@ public class RegionsDbHelper extends SQLiteOpenHelper {
 	
 	public static final String KEY_REGION_ID = "regionid";
 	public static final String KEY_REGION_NAME = "reg_name";
-	public static final String KEY_REGION_LAT_S = "reg_latitude_s";
-	public static final String KEY_REGION_LAT_N = "reg_latitude_n";
-	public static final String KEY_REGION_LONG_W = "reg_longitude_w";
-	public static final String KEY_REGION_LONG_E = "reg_longitude_e";
+	public static final String KEY_REGION_LAT_0 = "reg_latitude_0";
+	public static final String KEY_REGION_LAT_1 = "reg_latitude_1";
+	public static final String KEY_REGION_LONG_0 = "reg_longitude_0";
+	public static final String KEY_REGION_LONG_1 = "reg_longitude_1";
 	public static final String KEY_REGION_THEMEID = "theme_id";
 	
-	public static final String[] ALL_KEYS_REGION = new String[]{ KEY_REGION_ID, KEY_REGION_NAME, KEY_REGION_LAT_S, KEY_REGION_LAT_N,
-											KEY_REGION_LONG_W, KEY_REGION_LONG_E, KEY_REGION_THEMEID };
+	public static final String[] ALL_KEYS_REGION = new String[]{ KEY_REGION_ID, KEY_REGION_NAME, KEY_REGION_LAT_0, KEY_REGION_LAT_1,
+											KEY_REGION_LONG_0, KEY_REGION_LONG_1, KEY_REGION_THEMEID };
 	public static final String[] ALL_KEYS_THEME = new String[]{ KEY_THEMES_ID, KEY_THEME_NAME, KEY_THEME_URI};
 	
 	
@@ -49,10 +49,10 @@ public class RegionsDbHelper extends SQLiteOpenHelper {
 		   db.execSQL( "CREATE TABLE " + TABLE_REGIONS + "(" +
 		          KEY_REGION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 		          KEY_REGION_NAME + " TEXT NOT NULL, " +
-		          KEY_REGION_LAT_S + " REAL NOT NULL, " +
-		          KEY_REGION_LAT_N + " REAL NOT NULL, " +
-		          KEY_REGION_LONG_W + " REAL NOT NULL, " +
-		          KEY_REGION_LONG_E + " REAL NOT NULL, " +
+		          KEY_REGION_LAT_0 + " REAL NOT NULL, " +
+		          KEY_REGION_LAT_1 + " REAL NOT NULL, " +
+		          KEY_REGION_LONG_0 + " REAL NOT NULL, " +
+		          KEY_REGION_LONG_1 + " REAL NOT NULL, " +
 		          KEY_REGION_THEMEID + " INTEGER," +
 		          "FOREIGN KEY(" + KEY_REGION_THEMEID + ") REFERENCES THEMES(" + KEY_THEMES_ID + "))" );
 		 	

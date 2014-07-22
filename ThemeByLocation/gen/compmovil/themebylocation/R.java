@@ -248,11 +248,12 @@ containing a value of this type.
         public static final int max_length_region_name=0x7f080001;
     }
     public static final class layout {
-        public static final int main_layout=0x7f030000;
-        public static final int map_layout=0x7f030001;
-        public static final int region_edit_dialog=0x7f030002;
-        public static final int regionsadmin_layout=0x7f030003;
-        public static final int spinner_themes=0x7f030004;
+        public static final int list_item_theme=0x7f030000;
+        public static final int main_layout=0x7f030001;
+        public static final int map_layout=0x7f030002;
+        public static final int region_edit_dialog=0x7f030003;
+        public static final int regionsadmin_layout=0x7f030004;
+        public static final int spinner_themes=0x7f030005;
     }
     public static final class menu {
         public static final int maps_menu=0x7f0a0000;

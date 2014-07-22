@@ -112,15 +112,15 @@ public class EditorActivity extends Activity {
 	        	refreshTable();
 	        	return true;
 	        case R.id.test_googlemap_activity:
-//	        	mRegionsThemesDB.updateRegionTheme(3, 2);
-//	    		Intent params = new Intent(this, GoogleMapActivity.class);
-//	    		params.putExtra(GoogleMapActivity.REGION_ID, -1);
-//	    		params.putExtra(GoogleMapActivity.REGION_NAME, "region 3");
-//	    		params.putExtra(GoogleMapActivity.LATITUDE0, 25);
-//	    		params.putExtra(GoogleMapActivity.LONGITUDE0, -50);
-//	    		params.putExtra(GoogleMapActivity.LATITUDE1, 26);
-//	    		params.putExtra(GoogleMapActivity.LONGITUDE1, -51);
-//	        	mRegionEditor.persistRegion(params);
+	    		Intent params = new Intent(this, GoogleMapActivity.class);
+	    		params.putExtra(GoogleMapActivity.REGION_ID, -1);
+	    		params.putExtra(GoogleMapActivity.REGION_NAME, "region 1");
+	    		params.putExtra(GoogleMapActivity.LATITUDE0, 25.0);
+	    		params.putExtra(GoogleMapActivity.LONGITUDE0, -50.0);
+	    		params.putExtra(GoogleMapActivity.LATITUDE1, 26.0);
+	    		params.putExtra(GoogleMapActivity.LONGITUDE1, -51.0);
+	    		mRegionEditor.persistRegion(params);
+	    		mRegionsThemesDB.updateRegionTheme(1, 2);
 	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
@@ -162,8 +162,7 @@ public class EditorActivity extends Activity {
             	mRegionEditor.editRegionCoordinates(regionId);
                 break;
             case R.id.choose_another_theme:
-            	//mRegionEditor.chooseAnotherTheme(regionId, themeId);
-            	Toast.makeText(this, "IMPLEMENTAR selección de tema: ", Toast.LENGTH_SHORT).show();
+            	mRegionEditor.chooseAnotherTheme(regionId, themeId);
                 break;
             case R.id.delete_region:
             	//mRegionEditor.deleteRegion(regionId);

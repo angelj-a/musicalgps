@@ -89,11 +89,12 @@ int id test_googlemap_activity 0x7f060012
 int id unbindbutton 0x7f060005
 int integer google_play_services_version 0x7f080000
 int integer max_length_region_name 0x7f080001
-int layout main_layout 0x7f030000
-int layout map_layout 0x7f030001
-int layout region_edit_dialog 0x7f030002
-int layout regionsadmin_layout 0x7f030003
-int layout spinner_themes 0x7f030004
+int layout list_item_theme 0x7f030000
+int layout main_layout 0x7f030001
+int layout map_layout 0x7f030002
+int layout region_edit_dialog 0x7f030003
+int layout regionsadmin_layout 0x7f030004
+int layout spinner_themes 0x7f030005
 int menu maps_menu 0x7f0a0000
 int menu options_menu 0x7f0a0001
 int menu region_editor_menu 0x7f0a0002
