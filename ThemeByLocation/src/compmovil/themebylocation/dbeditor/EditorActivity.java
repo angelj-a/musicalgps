@@ -157,6 +157,10 @@ public class EditorActivity extends Activity {
         return true;
     }
 
+	/*
+	
+	*/
+
 
 	private void showTable() {		
 		//TODO: MVC & replace with a ListView
